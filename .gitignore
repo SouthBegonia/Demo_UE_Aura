@@ -76,4 +76,4 @@ DerivedDataCache/*
 
 .idea/
 
-Content/Assets/
+# Content/AuraAssets/
