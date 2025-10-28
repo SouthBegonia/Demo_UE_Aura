@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "AuraCharacterBase.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
+
 UCLASS(Abstract)
 class DEMO_UE_AURA_API AAuraCharacterBase : public ACharacter
 {
@@ -19,4 +22,11 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Aura|Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USpringArmComponent> SpringArm;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UCameraComponent> CameraComp;
 };
