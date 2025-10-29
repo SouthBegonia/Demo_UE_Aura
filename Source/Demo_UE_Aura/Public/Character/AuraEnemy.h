@@ -18,9 +18,19 @@ class DEMO_UE_AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInte
 public:
 	AAuraEnemy();
 
+protected:
+	virtual void BeginPlay() override;
+
+
+#pragma region CursorHighlight
+
+public:
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bHighlighted = false;
+
+#pragma endregion
+
 };

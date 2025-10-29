@@ -27,6 +27,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+#pragma region Input
+
 private:
 	UPROPERTY(EditAnywhere, Category="Aura|Input")
 	TObjectPtr<UInputMappingContext> AuraInputContext;
@@ -36,8 +38,15 @@ private:
 
 	void Move(const FInputActionValue& InputActionValue);
 
+#pragma endregion
 
+#pragma region CursorTrace
+
+private:
 	void CursorTrace();
 	IEnemyInterface* LastActor;
 	IEnemyInterface* ThisActor;
+
+#pragma endregion
+
 };
