@@ -19,5 +19,7 @@ public class Demo_UE_Aura : ModuleRules
 		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
 
 		// To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
+
+		OptimizeCode = CodeOptimization.Never;
 	}
 }
