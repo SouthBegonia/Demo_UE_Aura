@@ -8,7 +8,9 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Player/AuraPlayerController.h"
 #include "Player/AuraPlayerState.h"
+#include "UI/AuraHUD.h"
 
 AAuraCharacter::AAuraCharacter()
 {
@@ -36,6 +38,7 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 
 	// Init AbilityActorInfo for [Server]
 	InitAbilityActorInfo();
+	InitHUD();
 }
 
 void AAuraCharacter::OnRep_PlayerState()
@@ -44,6 +47,7 @@ void AAuraCharacter::OnRep_PlayerState()
 
 	// Init AbilityActorInfo for [Client]
 	InitAbilityActorInfo();
+	InitHUD();
 }
 
 void AAuraCharacter::InitAbilityActorInfo()
@@ -54,4 +58,18 @@ void AAuraCharacter::InitAbilityActorInfo()
 
 	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
 	AttributeSet = AuraPlayerState->GetAttributeSet();
+}
+
+void AAuraCharacter::InitHUD()
+{
+	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	AAuraPlayerController* AuraPlayerController = Cast<AAuraPlayerController>(GetController());
+	if (AuraPlayerController)	// check for multiplayer
+	{
+		AAuraHUD* AuraHUD = Cast<AAuraHUD>(AuraPlayerController->GetHUD());
+		if (AuraHUD)
+		{
+			AuraHUD->InitOverlay(AuraPlayerController, AuraPlayerState, AbilitySystemComponent, AttributeSet);
+		}
+	}
 }

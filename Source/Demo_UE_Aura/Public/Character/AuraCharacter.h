@@ -41,4 +41,11 @@ public:
 
 #pragma endregion
 
+#pragma region HUD
+
+private:
+	void InitHUD();
+
+#pragma endregion
+
 };

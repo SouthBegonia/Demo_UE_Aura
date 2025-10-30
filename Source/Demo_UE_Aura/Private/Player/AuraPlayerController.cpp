@@ -61,8 +61,11 @@ void AAuraPlayerController::BeginPlay()
 	check(AuraInputContext);
 
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	check(Subsystem);
-	Subsystem->AddMappingContext(AuraInputContext, 0);
+	if (Subsystem)	// check for multiplayer
+	{
+		Subsystem->AddMappingContext(AuraInputContext, 0);
+	}
+	//check(Subsystem); // check for singleplayer
 
 
 	bShowMouseCursor = true;
