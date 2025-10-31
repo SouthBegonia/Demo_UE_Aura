@@ -9,9 +9,9 @@
 UAuraAttributeSet::UAuraAttributeSet()
 {
 	// TODO : Apply by GE
-	InitHealth(80.f);
+	InitHealth(20.f);
 	InitMaxHealth(100.f);
-	InitMana(80.f);
+	InitMana(20.f);
 	InitMaxMana(100.f);
 }
 
