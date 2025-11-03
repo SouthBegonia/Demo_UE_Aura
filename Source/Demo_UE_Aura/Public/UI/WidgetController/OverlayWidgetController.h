@@ -29,10 +29,8 @@ struct FUIWidgetRow : public FTableRowBase
 	TSoftObjectPtr<UTexture2D> Image = nullptr;
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, NewHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangedSignature, float, NewMaxHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnManaChangedSignature, float, NewMana);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxManaChangedSignature, float, NewMaxMana);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangeSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 
 /**
@@ -51,26 +49,22 @@ public:
 	virtual void BindCallbackToDependencies() override;
 
 	UPROPERTY(BlueprintAssignable, Category="Aura|GAS|Attributes")
-	FOnHealthChangedSignature OnHealthChanged;
+	FOnAttributeChangeSignature OnHealthChanged;
 
 	UPROPERTY(BlueprintAssignable, Category="Aura|GAS|Attributes")
-	FOnMaxHealthChangedSignature OnMaxHealthChanged;
+	FOnAttributeChangeSignature OnMaxHealthChanged;
 
 	UPROPERTY(BlueprintAssignable, Category="Aura|GAS|Attributes")
-	FOnManaChangedSignature OnManaChanged;
+	FOnAttributeChangeSignature OnManaChanged;
 
 	UPROPERTY(BlueprintAssignable, Category="Aura|GAS|Attributes")
-	FOnMaxManaChangedSignature OnMaxManaChanged;
+	FOnAttributeChangeSignature OnMaxManaChanged;
 
 
 	UPROPERTY(BlueprintAssignable, Category="Aura|GAS|Message")
 	FMessageWidgetRowSignature MessageWidgetRowDelegate;
 
 protected:
-	void HealthChanged(const FOnAttributeChangeData& AttributeChangeData) const;
-	void MaxHealthChanged(const FOnAttributeChangeData& AttributeChangeData) const;
-	void ManaChanged(const FOnAttributeChangeData& AttributeChangeData) const;
-	void MaxManaChanged(const FOnAttributeChangeData& AttributeChangeData) const;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Aura|Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
