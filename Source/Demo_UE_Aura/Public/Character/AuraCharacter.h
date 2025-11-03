@@ -26,7 +26,7 @@ public:
 #pragma region GAS
 
 private:
-	void InitAbilityActorInfo();
+	virtual void InitAbilityActorInfo() override;
 
 #pragma endregion
 

@@ -24,7 +24,7 @@ public:
 	// get initial Attribute from ASC and broadcast at once
 	virtual void BroadcastInitialValues() override;
 
-	// Bind Attribute changed event from ASC
+	// Bind callback event : Attribute changed、Gameplay tag ...
 	virtual void BindCallbackToDependencies() override;
 
 	UPROPERTY(BlueprintAssignable, Category="Aura|GAS|Attributes")
