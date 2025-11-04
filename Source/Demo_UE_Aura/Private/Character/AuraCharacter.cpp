@@ -60,6 +60,10 @@ void AAuraCharacter::InitAbilityActorInfo()
 
 	AbilitySystemComponent = AuraPlayerState->GetAbilitySystemComponent();
 	AttributeSet = AuraPlayerState->GetAttributeSet();
+
+
+	// initial Attributes by GE
+	InitialPrimaryAttributes();
 }
 
 void AAuraCharacter::InitHUD()
