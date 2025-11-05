@@ -63,7 +63,7 @@ void AAuraCharacter::InitAbilityActorInfo()
 
 
 	// initial Attributes by GE
-	InitialPrimaryAttributes();
+	InitializeDefaultAttributes();
 }
 
 void AAuraCharacter::InitHUD()
