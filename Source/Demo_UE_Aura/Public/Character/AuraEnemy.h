@@ -23,6 +23,17 @@ protected:
 
 	virtual void InitAbilityActorInfo() override;
 
+#pragma region Level
+
+public:
+	virtual int32 GetPlayerLevel() override;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Character Class Defaults")
+	int32 Level = 1;
+
+#pragma endregion
+
 
 #pragma region CursorHighlight
 

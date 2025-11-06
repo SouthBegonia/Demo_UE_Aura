@@ -23,6 +23,23 @@ class DEMO_UE_AURA_API AAuraPlayerState : public APlayerState, public IAbilitySy
 public:
 	AAuraPlayerState();
 
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+
+
+#pragma region Level
+
+public:
+	FORCEINLINE int32 GetPlayerLevel() const { return Level; }
+
+private:
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_Level)
+	int32 Level = 1;
+
+	UFUNCTION()
+	void OnRep_Level(int32 OldLevel);
+
+#pragma endregion
+
 
 #pragma region GAS
 
