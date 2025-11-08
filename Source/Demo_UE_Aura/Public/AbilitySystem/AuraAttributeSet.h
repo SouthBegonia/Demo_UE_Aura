@@ -59,6 +59,10 @@ public:
 
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
+
+	TMap<FGameplayTag, FGameplayAttribute(*)()> TagsToAttributes;
+
+
 #pragma region Attributes - Vital
 
 	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_Health, Category="Attributes|Vital")
