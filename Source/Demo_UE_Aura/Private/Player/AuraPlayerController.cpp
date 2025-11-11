@@ -5,6 +5,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
@@ -82,8 +83,9 @@ void AAuraPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+	UAuraInputComponent* AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
+	AuraInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::Move);
+	AuraInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
 }
 
 void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
@@ -100,4 +102,19 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector2D.Y);
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector2D.X);
 	}
+}
+
+void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	//GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Green, FString::Printf(TEXT("Pressed    InputTag = %s"), *InputTag.ToString()));
+}
+
+void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	//GEngine->AddOnScreenDebugMessage(2, 1.f, FColor::Red, FString::Printf(TEXT("Released    InputTag = %s"), *InputTag.ToString()));
+}
+
+void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+	//GEngine->AddOnScreenDebugMessage(3, 1.f, FColor::Black, FString::Printf(TEXT("Held    InputTag = %s"), *InputTag.ToString()));
 }

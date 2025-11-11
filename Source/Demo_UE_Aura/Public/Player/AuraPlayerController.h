@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
 
+struct FGameplayTag;
+class UAuraInputConfig;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -37,6 +39,14 @@ private:
 	TObjectPtr<UInputAction> MoveAction;
 
 	void Move(const FInputActionValue& InputActionValue);
+
+
+	UPROPERTY(EditDefaultsOnly, Category="Aura|Input")
+	TObjectPtr<UAuraInputConfig> InputConfig;
+
+	void AbilityInputTagPressed(FGameplayTag InputTag);
+	void AbilityInputTagReleased(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
 
 #pragma endregion
 
