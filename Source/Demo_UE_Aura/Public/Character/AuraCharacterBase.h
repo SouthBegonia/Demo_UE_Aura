@@ -9,6 +9,7 @@
 #include "AuraCharacterBase.generated.h"
 
 
+class UGameplayAbility;
 class UGameplayEffect;
 class UAbilitySystemComponent;
 class UAttributeSet;
@@ -55,6 +56,13 @@ protected:
 
 	void InitializeDefaultAttributes() const;
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& EffectClass, float Level) const;
+
+
+	void AddCharacterAbilities();
+
+private:
+	UPROPERTY(EditAnywhere, Category="Aura|Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
 
 #pragma endregion
 
