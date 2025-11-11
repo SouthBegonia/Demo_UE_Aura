@@ -13,5 +13,8 @@ UCLASS()
 class DEMO_UE_AURA_API UAuraGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
-	
+
+public:
+	UPROPERTY(EditDefaultsOnly, Category="Aura|Input")
+	FGameplayTag StartupInputTag;
 };

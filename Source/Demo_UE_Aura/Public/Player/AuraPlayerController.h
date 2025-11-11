@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
 
+class UAuraAbilitySystemComponent;
 struct FGameplayTag;
 class UAuraInputConfig;
 class UInputMappingContext;
@@ -28,6 +29,17 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+
+
+#pragma region GAS
+
+private:
+	UPROPERTY()
+	TObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponent;
+
+	UAuraAbilitySystemComponent* GetASC();
+
+#pragma endregion
 
 #pragma region Input
 
