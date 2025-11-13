@@ -58,6 +58,13 @@ private:
 
 	void Move(const FInputActionValue& InputActionValue);
 
+	UPROPERTY(EditAnywhere, Category="Aura|Input")
+	TObjectPtr<UInputAction> ShiftAction;
+
+	void ShiftPressed(const FInputActionValue& InputActionValue) { bShiftKeyDown = true; };
+	void ShiftReleased(const FInputActionValue& InputActionValue) { bShiftKeyDown = false; };
+	bool bShiftKeyDown = false;
+
 
 	UPROPERTY(EditDefaultsOnly, Category="Aura|Input")
 	TObjectPtr<UAuraInputConfig> InputConfig;
