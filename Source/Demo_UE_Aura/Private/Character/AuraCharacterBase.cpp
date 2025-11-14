@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAttributeSet.h"
 #include "Components/CapsuleComponent.h"
 #include "Demo_UE_Aura/Demo_UE_Aura.h"
 
@@ -17,6 +18,7 @@ AAuraCharacterBase::AAuraCharacterBase()
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_PROJECTILE, ECR_Overlap);
 	GetMesh()->SetGenerateOverlapEvents(true);
@@ -50,6 +52,8 @@ void AAuraCharacterBase::InitializeDefaultAttributes() const
 		ApplyEffectToSelf(DefaultSecondaryAttribute, 1.f);
 	}
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
+
+	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Black, FString::Printf(TEXT("Health = %f"), Cast<UAuraAttributeSet>(AttributeSet)->GetHealth()));
 }
 
 void AAuraCharacterBase::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& EffectClass, float Level) const
