@@ -59,7 +59,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category="Aura|Attributes")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
 
-	void InitializeDefaultAttributes() const;
+	virtual void InitializeDefaultAttributes() const;
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& EffectClass, float Level) const;
 
 

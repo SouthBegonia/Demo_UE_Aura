@@ -3,6 +3,8 @@
 
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 
+#include "AbilitySystemComponent.h"
+#include "Game/AuraGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerState.h"
 #include "UI/AuraHUD.h"
@@ -40,4 +42,28 @@ UAttributeMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidge
 	}
 
 	return nullptr;
+}
+
+void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC)
+{
+	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if (AuraGameMode == nullptr)
+		return;
+
+
+	const UCharacterClassInfo* CharacterClassInfo = AuraGameMode->CharacterClassInfo;
+	const FCharacterClassDefaultInfo ClassDefaultInfo = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
+
+	// Apply GE to initialize（Primary、Secondary、Vital）
+	AActor* AvatarActor = ASC->GetAvatarActor();
+	auto ApplyAttributesGE = [&ASC, &Level, &AvatarActor](const TSubclassOf<UGameplayEffect>& GameplayEffectClass)
+	{
+		FGameplayEffectContextHandle EffectContextHandle = ASC->MakeEffectContext();
+		EffectContextHandle.AddSourceObject(AvatarActor);
+		const FGameplayEffectSpecHandle AttributesSpecHandle = ASC->MakeOutgoingSpec(GameplayEffectClass, Level, EffectContextHandle);
+		ASC->ApplyGameplayEffectSpecToSelf(*AttributesSpecHandle.Data.Get());
+	};
+	ApplyAttributesGE(ClassDefaultInfo.PrimaryAttributes);
+	ApplyAttributesGE(CharacterClassInfo->SecondaryAttributes);
+	ApplyAttributesGE(CharacterClassInfo->VitalAttributes);
 }

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Character/AuraCharacterBase.h"
 #include "Interaction/EnemyInterface.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
@@ -22,14 +23,19 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
 	virtual void InitAbilityActorInfo() override;
+	virtual void InitializeDefaultAttributes() const override;
+
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangeSignature OnHealthChanged;
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangeSignature OnMaxHealthChanged;
 
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Character Class Defaults")
+	ECharacterClass CharacterClass = ECharacterClass::Warrior;
 
 #pragma region Level
 
