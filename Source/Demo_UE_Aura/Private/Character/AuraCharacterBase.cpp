@@ -47,10 +47,7 @@ void AAuraCharacterBase::InitAbilityActorInfo()
 void AAuraCharacterBase::InitializeDefaultAttributes() const
 {
 	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.f);
-	for (const TSubclassOf<UGameplayEffect>& DefaultSecondaryAttribute : DefaultSecondaryAttributes)
-	{
-		ApplyEffectToSelf(DefaultSecondaryAttribute, 1.f);
-	}
+	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
 
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Black, FString::Printf(TEXT("Health = %f"), Cast<UAuraAttributeSet>(AttributeSet)->GetHealth()));
