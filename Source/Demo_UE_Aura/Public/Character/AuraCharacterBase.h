@@ -33,6 +33,12 @@ protected:
 
 	virtual FVector GetCombatSocketLocation() override;
 
+
+	UPROPERTY(EditAnywhere, Category="Aura|Combat")
+	TObjectPtr<UAnimMontage> HitReactMontage;
+
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+
 #pragma region GAS
 
 public:
