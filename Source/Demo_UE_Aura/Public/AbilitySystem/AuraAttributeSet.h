@@ -214,7 +214,15 @@ public:
 	void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana) const;
 
 #pragma endregion
-	
+
+#pragma region Attributes - Meta
+
+	UPROPERTY(BlueprintReadOnly, /*Replicated = OnRep_Health,*/ Category="Attributes|Meta")	//do not Replicate, only process on Server
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, IncomingDamage);
+
+#pragma endregion
+
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 };
