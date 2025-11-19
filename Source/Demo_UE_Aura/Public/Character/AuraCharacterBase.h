@@ -25,6 +25,14 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+#pragma region Combat
+
+public:
+	virtual void Die() override;
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleDeath();
+
+protected:
 	UPROPERTY(EditAnywhere, Category="Aura|Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
@@ -38,6 +46,9 @@ protected:
 	TObjectPtr<UAnimMontage> HitReactMontage;
 
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+
+#pragma endregion
+
 
 #pragma region GAS
 

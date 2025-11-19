@@ -33,26 +33,27 @@ protected:
 	FOnAttributeChangeSignature OnMaxHealthChanged;
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Character Class Defaults")
+	ECharacterClass CharacterClass = ECharacterClass::Warrior;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Character Class Defaults")
+	int32 Level = 1;
+
+
+#pragma region Combat
+
 public:
+	virtual int32 GetPlayerLevel() override;
+	virtual void Die() override;
+
 	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
 	UPROPERTY(BlueprintReadOnly, Category="Aura|Combat")
 	bool bHitReacting = false;
 	UPROPERTY(BlueprintReadOnly, Category="Aura|Combat")
 	float BaseWalkSpeed = 250.f;
-
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Character Class Defaults")
-	ECharacterClass CharacterClass = ECharacterClass::Warrior;
-
-#pragma region Level
-
-public:
-	virtual int32 GetPlayerLevel() override;
-
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Character Class Defaults")
-	int32 Level = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Combat")
+	float LifeSpan = 5.f;
 
 #pragma endregion
 
