@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
 
+class UDamageTextComponent;
 class USplineComponent;
 class UAuraAbilitySystemComponent;
 struct FGameplayTag;
@@ -105,4 +106,16 @@ private:
 
 #pragma endregion
 
+
+#pragma region Combat
+
+public:
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category="Aura|Combat")
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
+
+#pragma endregion
 };
