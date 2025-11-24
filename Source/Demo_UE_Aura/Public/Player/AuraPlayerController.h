@@ -111,7 +111,7 @@ private:
 
 public:
 	UFUNCTION(Client, Reliable)
-	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bIsBlockedHit, bool bIsCriticalHit);
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category="Aura|Combat")
