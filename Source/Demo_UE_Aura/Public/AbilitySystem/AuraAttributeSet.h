@@ -215,6 +215,50 @@ public:
 
 #pragma endregion
 
+#pragma region Attributes - Resistance
+
+	/**
+	 * FireResistance : Reduces the damage of target type
+	 *  - depends on 
+	 */
+	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_FireResistance, Category="Attributes|Resistance")
+	FGameplayAttributeData FireResistance;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, FireResistance);
+	UFUNCTION()
+	void OnRep_FireResistance(const FGameplayAttributeData& OldFireResistance) const;
+
+	/**
+	 * LightingResistance : Reduces the damage of target type
+	 *  - depends on 
+	 */
+	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_LightingResistance, Category="Attributes|Resistance")
+	FGameplayAttributeData LightingResistance;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, LightingResistance);
+	UFUNCTION()
+	void OnRep_LightingResistance(const FGameplayAttributeData& OldLightingResistance) const;
+
+	/**
+	 * ArcaneResistance : Reduces the damage of target type
+	 *  - depends on 
+	 */
+	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_ArcaneResistance, Category="Attributes|Resistance")
+	FGameplayAttributeData ArcaneResistance;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, ArcaneResistance);
+	UFUNCTION()
+	void OnRep_ArcaneResistance(const FGameplayAttributeData& OldArcaneResistance) const;
+
+	/**
+	 * PhysicalResistance : Reduces the damage of target type
+	 *  - depends on 
+	 */
+	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_PhysicalResistance, Category="Attributes|Resistance")
+	FGameplayAttributeData PhysicalResistance;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, PhysicalResistance);
+	UFUNCTION()
+	void OnRep_PhysicalResistance(const FGameplayAttributeData& OldPhysicalResistance) const;
+
+#pragma endregion
+
 #pragma region Attributes - Meta
 
 	UPROPERTY(BlueprintReadOnly, /*Replicated = OnRep_Health,*/ Category="Attributes|Meta")	//do not Replicate, only process on Server

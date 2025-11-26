@@ -42,7 +42,22 @@ public:
 	FGameplayTag InputTag_4;
 
 
+	FGameplayTag Attributes_Resistance_Fire;
+	FGameplayTag Attributes_Resistance_Lighting;
+	FGameplayTag Attributes_Resistance_Arcane;
+	FGameplayTag Attributes_Resistance_Physical;
+
 	FGameplayTag Damage;
+	FGameplayTag Damage_Fire;
+	FGameplayTag Damage_Lighting;
+	FGameplayTag Damage_Arcane;
+	FGameplayTag Damage_Physical;
+
+	/*
+	 * Map of Damage Types to Resistances
+	 *	- ex: key = Damage_Fire, value = Attributes_Resistance_Fire
+	 */
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistancesMap;
 
 
 	FGameplayTag Effects_HitReact;
