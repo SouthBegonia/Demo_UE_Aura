@@ -41,8 +41,17 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GamePlayEffectClass);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Applied Effects")
+	/*
+	 * Decide should this Actor be destroyed after Applied GE
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Applied Effects", meta=(ToolTip="Decide should this Actor be destroyed after Applied GE"))
 	bool bDestroyOnEffectRemoval = false;
+
+	/*
+	 * Decide whether GE can be Applied to EnemyActor(witch has tag "Enemy")
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Applied Effects", meta=(ToolTip="Decide whether GE can be Applied to EnemyActor(witch has tag \"Enemy\")"))
+	bool bApplyEffectToEnemies = false;
 
 	UFUNCTION(BlueprintCallable)
 	void OnOverlap(AActor* TargetActor);
