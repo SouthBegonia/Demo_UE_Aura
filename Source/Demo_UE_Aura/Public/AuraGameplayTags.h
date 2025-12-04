@@ -53,6 +53,8 @@ public:
 	FGameplayTag Damage_Arcane;
 	FGameplayTag Damage_Physical;
 
+	FGameplayTag Abilities_Attack;
+
 	/*
 	 * Map of Damage Types to Resistances
 	 *	- ex: key = Damage_Fire, value = Attributes_Resistance_Fire

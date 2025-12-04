@@ -39,7 +39,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Aura|Combat")
 	FName WeaponTipSocketName;
 
-	virtual FVector GetCombatSocketLocation() override;
+	virtual FVector GetCombatSocketLocation_Implementation() override;
+	virtual bool IsDead_Implementation() const override;
+	virtual AActor* GetAvatar_Implementation() override;
+
+	bool bDead = false;
 
 
 	UPROPERTY(EditAnywhere, Category="Aura|Combat")
