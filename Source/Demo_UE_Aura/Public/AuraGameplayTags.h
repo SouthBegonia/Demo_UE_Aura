@@ -55,6 +55,10 @@ public:
 
 	FGameplayTag Abilities_Attack;
 
+	FGameplayTag Montage_Attack_Weapon;
+	FGameplayTag Montage_Attack_LeftHand;
+	FGameplayTag Montage_Attack_RightHand;
+
 	/*
 	 * Map of Damage Types to Resistances
 	 *	- ex: key = Damage_Fire, value = Attributes_Resistance_Fire

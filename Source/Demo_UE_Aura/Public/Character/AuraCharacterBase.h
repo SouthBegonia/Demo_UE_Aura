@@ -32,6 +32,9 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastHandleDeath();
 
+	UPROPERTY(EditAnywhere, Category="Aura|Combat")
+	TArray<FTaggedMontage> AttackMontages;
+
 protected:
 	UPROPERTY(EditAnywhere, Category="Aura|Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
@@ -42,6 +45,7 @@ protected:
 	virtual FVector GetCombatSocketLocation_Implementation() override;
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
+	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
 
 	bool bDead = false;
 
