@@ -160,3 +160,17 @@ void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldC
 		}
 	}
 }
+
+bool UAuraAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondActor)
+{
+	check(FirstActor && SecondActor);
+
+	auto CheckActorsHasSameTagFunc = [&FirstActor, &SecondActor](const FName& TagName)
+	{
+		return FirstActor->ActorHasTag(TagName) && SecondActor->ActorHasTag(TagName);
+	};
+
+	const bool bIsFriends = CheckActorsHasSameTagFunc(FName("Player")) || CheckActorsHasSameTagFunc(FName("Enemy"));
+
+	return !bIsFriends;
+}
