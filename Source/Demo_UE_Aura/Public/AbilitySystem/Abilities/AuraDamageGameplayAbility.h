@@ -14,6 +14,13 @@ class DEMO_UE_AURA_API UAuraDamageGameplayAbility : public UAuraGameplayAbility
 {
 	GENERATED_BODY()
 
+public:
+	/*
+	 * Apply Damage GE to Target
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Aura|Damage", meta=(ToolTip="Apply Damage GE to Target"))
+	void CauseDamage(AActor* TargetActor);
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Aura|Damage")
