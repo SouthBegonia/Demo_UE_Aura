@@ -41,8 +41,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Aura|Combat")
 	FName WeaponTipSocketName;
+	UPROPERTY(EditAnywhere, Category="Aura|Combat")
+	FName LeftHandSocketName;
+	UPROPERTY(EditAnywhere, Category="Aura|Combat")
+	FName RightHandSocketName;
 
-	virtual FVector GetCombatSocketLocation_Implementation() override;
+	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
 	virtual bool IsDead_Implementation() const override;
 	virtual AActor* GetAvatar_Implementation() override;
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
