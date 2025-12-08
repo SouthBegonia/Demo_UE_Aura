@@ -36,7 +36,7 @@ public:
 	TArray<FTaggedMontage> AttackMontages;
 
 protected:
-	UPROPERTY(EditAnywhere, Category="Aura|Combat")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
 	UPROPERTY(EditAnywhere, Category="Aura|Combat")

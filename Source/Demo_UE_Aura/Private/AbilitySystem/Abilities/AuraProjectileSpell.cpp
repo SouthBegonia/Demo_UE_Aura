@@ -27,6 +27,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), FAuraGameplayTags::Get().Montage_Attack_Weapon);
 		FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 		Rotation.Pitch = 0.f;		// Fixed Pitch
+		// TODO : how to Adapt to Parabolic projectile?
 
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
