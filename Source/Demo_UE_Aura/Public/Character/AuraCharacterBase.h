@@ -75,8 +75,11 @@ protected:
 	void StartWeaponDissolveTimeline(UMaterialInstanceDynamic* DynamicMaterialInstance);
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Combat")
 	TObjectPtr<UNiagaraSystem> BloodEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Combat")
+	TObjectPtr<USoundBase> DeathSound;
 
 
 #pragma endregion

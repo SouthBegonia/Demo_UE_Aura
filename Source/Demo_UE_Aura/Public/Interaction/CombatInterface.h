@@ -23,7 +23,7 @@ struct FTaggedMontage
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FGameplayTag SocketTag;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(ToolTip="The Sound play when exactly hit target"))
 	TObjectPtr<USoundBase> ImpactSound = nullptr;
 };
 

@@ -9,6 +9,7 @@
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Components/CapsuleComponent.h"
 #include "Demo_UE_Aura/Demo_UE_Aura.h"
+#include "Kismet/GameplayStatics.h"
 
 AAuraCharacterBase::AAuraCharacterBase()
 {
@@ -153,6 +154,8 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation(), GetActorRotation());
 
 	Dissolve();
 	bDead = true;
