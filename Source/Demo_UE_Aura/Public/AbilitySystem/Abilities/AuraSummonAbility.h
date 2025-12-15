@@ -16,11 +16,14 @@ class DEMO_UE_AURA_API UAuraSummonAbility : public UAuraGameplayAbility
 
 public:
 
-	UPROPERTY(EditAnywhere, Category = "Aura|Summon")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Aura|Summon")
 	bool bDrawDebugLine = false;
 
 	UFUNCTION(BlueprintCallable, Category = "Aura|Summon")
 	TArray<FVector> GetSpawnLocations();
+
+	UFUNCTION(BlueprintPure, Category = "Aura|Summon")
+	TSubclassOf<APawn> GetRandomMinionClass();
 
 	UPROPERTY(EditDefaultsOnly, Category = "Aura|Summon")
 	int32 NumMinions = 5;
