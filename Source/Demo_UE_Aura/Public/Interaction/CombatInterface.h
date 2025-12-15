@@ -69,4 +69,21 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	FTaggedMontage GetTaggedMontageByTag(const FGameplayTag& MontageTag);
+
+
+#pragma region Summon
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, meta=(ToolTip="The maximum Minion can be summoned"))
+	int32 GetMaxMinionCount();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, meta=(ToolTip="How many Minion has been summoned"))
+	int32 GetMinionCount();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, meta=(ToolTip="can summon Minion?"))
+	bool CanSummonMinion();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void IncremenetMinionCount(const int32 Amount);
+
+#pragma endregion
 };

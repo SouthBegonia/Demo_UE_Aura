@@ -3,18 +3,42 @@
 
 #include "AbilitySystem/Abilities/AuraSummonAbility.h"
 
+#include "Interaction/CombatInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
+
+bool UAuraSummonAbility::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags,
+	const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+{
+	UObject* AvatarActor = GetAvatarActorFromActorInfo();
+	if (auto CombatInterface = Cast<ICombatInterface>(AvatarActor))
+	{
+		return CombatInterface->Execute_CanSummonMinion(AvatarActor);
+	}
+
+	return false;
+}
 
 TArray<FVector> UAuraSummonAbility::GetSpawnLocations()
 {
-	check(NumMinions > 1)	// not supported NumMinions==1 yet
+	UObject* AvatarObject = GetAvatarActorFromActorInfo();
+	auto CombatInterface = Cast<ICombatInterface>(AvatarObject);
+
+	int32 NumMinionsToSpawn = CombatInterface->Execute_GetMaxMinionCount(AvatarObject) - CombatInterface->Execute_GetMinionCount(AvatarObject);
+	if (NumMinionsToSpawn <= 1)
+	{
+		K2_EndAbility();
+		return TArray<FVector>();
+	}
+
+
+	check(NumMinionsToSpawn > 1)	// not supported NumMinionsToSpawn==1 yet
 
 	TArray<FVector> SpawnLocations;
 
 	const AActor* AvatarActor = GetAvatarActorFromActorInfo();
 	const FVector Forward = AvatarActor->GetActorForwardVector();
 	const FVector Location = AvatarActor->GetActorLocation();
-	const float DeltaSpread = NumMinions == 1 ? 0.f : SpawnSpread / (NumMinions - 1);
+	const float DeltaSpread = NumMinionsToSpawn == 1 ? 0.f : SpawnSpread / (NumMinionsToSpawn - 1);
 
 	const FVector LeftOfSpread = Forward.RotateAngleAxis(-SpawnSpread / 2.f, FVector::UpVector);
 	const FVector RightOfSpread = Forward.RotateAngleAxis(SpawnSpread / 2.f, FVector::UpVector);
@@ -23,7 +47,7 @@ TArray<FVector> UAuraSummonAbility::GetSpawnLocations()
 		UKismetSystemLibrary::DrawDebugCoordinateSystem(AvatarActor, Location, AvatarActor->GetActorRotation(), 100.f, 3.f, 5.f);
 
 
-	for (int32 i = 0; i < NumMinions; i++)
+	for (int32 i = 0; i < NumMinionsToSpawn; i++)
 	{
 		const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, FVector::UpVector);
 		FVector ChosenSpawnLocation = Location + Direction * FMath::FRandRange(MinSpawnDistance, MaxSpawnDistance);

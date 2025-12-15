@@ -86,6 +86,22 @@ protected:
 
 #pragma endregion
 
+#pragma region Combat - Summon
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category="Aura|Combat", meta = (ToolTip="(Only for Ability that can summon) The maximum minion count that can be summoned"))
+	int32 MaxMinionCount = 0;
+
+	// The total count of minion that have been summoned
+	int32 MinionCount = 0;
+
+	virtual int32 GetMaxMinionCount_Implementation() override;
+	virtual int32 GetMinionCount_Implementation() override;
+	virtual bool CanSummonMinion_Implementation() override;
+	virtual void IncremenetMinionCount_Implementation(const int32 Amount) override;
+
+#pragma endregion
+
 
 #pragma region GAS
 

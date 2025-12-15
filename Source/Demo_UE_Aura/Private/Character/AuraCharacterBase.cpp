@@ -162,3 +162,31 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 	Dissolve();
 	bDead = true;
 }
+
+#pragma region Combat - Summon
+
+int32 AAuraCharacterBase::GetMaxMinionCount_Implementation()
+{
+	return MaxMinionCount;
+}
+
+int32 AAuraCharacterBase::GetMinionCount_Implementation()
+{
+	return MinionCount;
+}
+
+bool AAuraCharacterBase::CanSummonMinion_Implementation()
+{
+	if (Execute_GetMaxMinionCount(this) <= 0)
+		return false;
+
+	//return Execute_GetMaxMinionCount(this) - Execute_GetMinionCount(this) > 0;
+	return Execute_GetMinionCount(this) <= 0;	// can summon only when there is no any minion
+}
+
+void AAuraCharacterBase::IncremenetMinionCount_Implementation(const int32 Amount)
+{
+	MinionCount += Amount;
+}
+
+#pragma endregion

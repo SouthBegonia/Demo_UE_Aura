@@ -16,6 +16,8 @@ class DEMO_UE_AURA_API UAuraSummonAbility : public UAuraGameplayAbility
 
 public:
 
+	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags = nullptr, const FGameplayTagContainer* TargetTags = nullptr, FGameplayTagContainer* OptionalRelevantTags = nullptr) const override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Aura|Summon")
 	bool bDrawDebugLine = false;
 
@@ -25,6 +27,10 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Aura|Summon")
 	TSubclassOf<APawn> GetRandomMinionClass();
 
+	/*
+	 * [Obsolete : AuraCharacterBase::MaxMinionCount replaced this]
+	 * The maximum minion count that can be summoned
+	 */
 	UPROPERTY(EditDefaultsOnly, Category = "Aura|Summon")
 	int32 NumMinions = 5;
 
