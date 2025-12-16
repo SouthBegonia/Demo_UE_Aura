@@ -140,7 +140,8 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector2D.X);
 	}
 
-	// TODO : Stop AutoRun?
+	// stop AutoRun when get input from Controller
+	bAutoRunning = false;
 }
 
 void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
