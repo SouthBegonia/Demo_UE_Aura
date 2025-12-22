@@ -8,9 +8,12 @@
 #include "AuraPlayerState.generated.h"
 
 
+class ULevelUpInfo;
 class UAbilitySystemComponent;
 class UAttributeSet;
 
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32 /* StatValue */)
 
 /**
  * 
@@ -29,14 +32,30 @@ public:
 #pragma region Level
 
 public:
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<ULevelUpInfo> LevelUpInfo;
+
+	FOnPlayerStatChangedSignature OnPlayerEXPChangedDelegate;
+	FOnPlayerStatChangedSignature OnPlayerLevelChangedDelegate;
+
 	FORCEINLINE int32 GetPlayerLevel() const { return Level; }
+	FORCEINLINE int32 GetPlayerEXP() const { return EXP; }
+
+	void SetPlayerLevel(const int32 InLevel);
+	void SetPlayerEXP(const int32 InEXP);
+	FORCEINLINE void AddToLevel(const int32 InLevel) { SetPlayerLevel(GetPlayerLevel() + InLevel); }
+	FORCEINLINE void AddToPlayerEXP(const int32 InEXP) { SetPlayerEXP(GetPlayerEXP() + InEXP); }
 
 private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_Level)
 	int32 Level = 1;
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_EXP)
+	int32 EXP = 0;
 
 	UFUNCTION()
 	void OnRep_Level(int32 OldLevel);
+	UFUNCTION()
+	void OnRep_EXP(int32 OldEXP);
 
 #pragma endregion
 
