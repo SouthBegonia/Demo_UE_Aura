@@ -49,6 +49,10 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_Level)
 	int32 Level = 1;
+	/*
+	 * EXP
+	 *	- Tip : value will always be increasing
+	 */
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_EXP)
 	int32 EXP = 0;
 

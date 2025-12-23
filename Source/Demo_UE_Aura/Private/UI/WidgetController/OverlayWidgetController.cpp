@@ -21,6 +21,23 @@ void UOverlayWidgetController::BroadcastInitialValues()
 	const float MaxMana = AuraAttributeSet->GetMaxMana();
 	OnManaChanged.Broadcast(Mana);
 	OnMaxManaChanged.Broadcast(MaxMana);
+
+
+	// InitialValue - PlayerLevel
+	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	const int32 CurrentPlayerLevel = AuraPlayerState->GetPlayerLevel();
+	OnPlayerLevelChanged.Broadcast(CurrentPlayerLevel);
+
+	// InitialValue - PlayerEXP
+	const int32 CurrentEXP = AuraPlayerState->GetPlayerEXP();
+	const ULevelUpInfo* LevelUpInfo = AuraPlayerState->LevelUpInfo;
+	checkf(LevelUpInfo, TEXT("Unable to find LevelUpInfo.  Please fill out AuraPlayerState::LevelUpInfo in BP"));
+	const int32 NowLevelUpRequirement = LevelUpInfo->GetLevelUpRequirement(CurrentPlayerLevel);
+	const int32 PreviousLevelUpRequirement = LevelUpInfo->GetLevelUpRequirement(CurrentPlayerLevel - 1);
+	const int32 DeltaLevelRequirement = NowLevelUpRequirement - PreviousLevelUpRequirement;
+	const int32 EXPForThisLevel = CurrentEXP - PreviousLevelUpRequirement;
+	const float EXPBarPercent = static_cast<float>(EXPForThisLevel) / static_cast<float>(DeltaLevelRequirement);
+	OnEXPPercentChanged.Broadcast(EXPBarPercent);
 }
 
 void UOverlayWidgetController::BindCallbackToDependencies()
