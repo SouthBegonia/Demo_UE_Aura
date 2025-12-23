@@ -37,6 +37,9 @@ public:
 	TArray<FTaggedMontage> AttackMontages;
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Character Class Defaults")
+	ECharacterClass CharacterClass = ECharacterClass::Warrior;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
@@ -55,6 +58,7 @@ protected:
 	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
 	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag) override;
+	virtual ECharacterClass GetCharacterClass_Implementation() override;
 
 	bool bDead = false;
 
@@ -138,6 +142,9 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category="Aura|Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+
+	UPROPERTY(EditAnywhere, Category="Aura|Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
 
 #pragma endregion
 

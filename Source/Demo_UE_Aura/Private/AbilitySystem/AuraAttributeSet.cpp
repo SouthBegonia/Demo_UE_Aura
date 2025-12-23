@@ -10,6 +10,7 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
+#include "Interaction/PlayerInterface.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/AuraPlayerController.h"
 
@@ -147,10 +148,64 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 				{
 					CombatInterface->Die();
 				}
+
+				SendEXPEvent(Props);
 			}
 			const bool bIsBlockedHit = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
 			const bool bIsCriticalHit = UAuraAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
 			ShowFloatingText(Props, LocalIncomingDamage, bIsBlockedHit, bIsCriticalHit);
+		}
+	}
+
+	// Incoming EXP
+	if (Data.EvaluatedData.Attribute == GetIncomingEXPAttribute())
+	{
+		const float LocalIncomingEXP = GetIncomingEXP();
+		SetIncomingEXP(0.f);
+
+		if (Props.SourceCharacter != nullptr && Props.SourceCharacter->Implements<UPlayerInterface>())
+		{
+			UObject* SourceObject = Props.SourceCharacter;
+
+			const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(SourceObject);
+			const int32 CurrentEXP = IPlayerInterface::Execute_GetEXP(SourceObject);
+
+			const int32 NewLevel = IPlayerInterface::Execute_FindLevelForEXp(SourceObject, CurrentEXP + LocalIncomingEXP);
+			const int32 DeltaLevel = NewLevel - CurrentLevel;
+			const bool bLevelUp = DeltaLevel > 0;
+
+			// Level up successfully - [DATA PROCESSING]
+			if (bLevelUp)
+			{
+				// [DATA PROCESSING] - Add RewardPoints
+				int32 RewardPoints_Attribute = 0;
+				int32 RewardPoints_Spell = 0;
+				for (int32 i = CurrentLevel + 1; i <= NewLevel; i++)
+				{
+					RewardPoints_Attribute += IPlayerInterface::Execute_GetAttributePointsReward(SourceObject, i);
+					RewardPoints_Spell += IPlayerInterface::Execute_GetSpellPointsReward(SourceObject, i);
+				}
+				IPlayerInterface::Execute_AddToAttributePoints(SourceObject, RewardPoints_Attribute);
+				IPlayerInterface::Execute_AddToSpellPoints(SourceObject, RewardPoints_Spell);
+
+				// [DATA PROCESSING] - Add PlayerLevel
+				IPlayerInterface::Execute_AddToPlayerLevel(SourceObject, DeltaLevel);
+
+
+				IPlayerInterface::Execute_LevelUp(SourceObject);
+			}
+
+			// Level up - [BONUS EFFECT]
+			if (bLevelUp)
+			{
+				// [BONUS EFFECT] - Recover Health、Mana
+				SetHealth(GetMaxHealth());
+				SetMana(GetMaxMana());
+			}
+
+
+			// [DATA PROCESSING] - Add EXP
+			IPlayerInterface::Execute_AddToEXP(SourceObject, LocalIncomingEXP);
 		}
 	}
 }
@@ -202,6 +257,24 @@ void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float D
 			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bIsBlockedHit, bIsCriticalHit);
 		}
 		// TODO feature : broadcast DamageNumber to other player, and Set it as a controllable config
+	}
+}
+
+void UAuraAttributeSet::SendEXPEvent(const FEffectProperties& Props)
+{
+	ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetCharacter);
+	if (CombatInterface)
+	{
+		const int32 TargetLevel = ICombatInterface::Execute_GetPlayerLevel(Props.TargetCharacter);
+		const ECharacterClass TargetClass = ICombatInterface::Execute_GetCharacterClass(Props.TargetCharacter);
+
+		const int32 EXPReward = UAuraAbilitySystemLibrary::GetEXPRewardForClassAndLevel(Props.TargetCharacter, TargetClass, TargetLevel);
+
+		const FAuraGameplayTags& Tags = FAuraGameplayTags::Get();
+		FGameplayEventData Payload;
+		Payload.EventTag = Tags.Attributes_Meta_IncomingEXP;
+		Payload.EventMagnitude = EXPReward;
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter, Tags.Attributes_Meta_IncomingEXP, Payload);
 	}
 }
 

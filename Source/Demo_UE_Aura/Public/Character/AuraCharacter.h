@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/AuraCharacterBase.h"
+#include "Interaction/PlayerInterface.h"
 #include "AuraCharacter.generated.h"
 
 class UCameraComponent;
@@ -13,7 +14,7 @@ class USpringArmComponent;
  * 
  */
 UCLASS()
-class DEMO_UE_AURA_API AAuraCharacter : public AAuraCharacterBase
+class DEMO_UE_AURA_API AAuraCharacter : public AAuraCharacterBase, public IPlayerInterface
 {
 	GENERATED_BODY()
 
@@ -24,7 +25,23 @@ public:
 	virtual void OnRep_PlayerState() override;
 
 
-	virtual int32 GetPlayerLevel() override;
+	virtual int32 GetPlayerLevel_Implementation() override;
+
+#pragma region PlayerInterface
+	virtual int32 GetEXP_Implementation() override;
+
+	virtual void AddToEXP_Implementation(int32 InEXP) override;
+	virtual void AddToPlayerLevel_Implementation(int32 InLevel) override;
+	virtual void AddToAttributePoints_Implementation(int32 InPoints) override;
+	virtual void AddToSpellPoints_Implementation(int32 InPoints) override;
+	virtual void LevelUp_Implementation() override;
+
+	virtual int32 FindLevelForEXp_Implementation(int32 InEXP) const override;
+
+	virtual int32 GetAttributePointsReward_Implementation(int32 InLevel) const override;
+	virtual int32 GetSpellPointsReward_Implementation(int32 InLevel) const override;
+
+#pragma endregion
 
 #pragma region GAS
 

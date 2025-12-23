@@ -83,7 +83,7 @@ void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContext
 	{
 		for (const TSubclassOf<UGameplayAbility>& AbilityClass : CharacterClassDefaultInfo.StartupAbilities)
 		{
-			FGameplayAbilitySpec GameplayAbilitySpec = FGameplayAbilitySpec(AbilityClass, CombatInterface->GetPlayerLevel());
+			FGameplayAbilitySpec GameplayAbilitySpec = FGameplayAbilitySpec(AbilityClass, ICombatInterface::Execute_GetPlayerLevel(ASC->GetAvatarActor()));
 			ASC->GiveAbility(GameplayAbilitySpec);
 		}
 	}
@@ -173,4 +173,16 @@ bool UAuraAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondAc
 	const bool bIsFriends = CheckActorsHasSameTagFunc(FName("Player")) || CheckActorsHasSameTagFunc(FName("Enemy"));
 
 	return !bIsFriends;
+}
+
+int32 UAuraAbilitySystemLibrary::GetEXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 CharacterLevel)
+{
+	const UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
+	if (CharacterClassInfo == nullptr)
+		return 0;
+
+	const FCharacterClassDefaultInfo Info = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
+	const float EXPReward = Info.EXPReward.GetValueAtLevel(CharacterLevel);
+
+	return FMath::FloorToInt32(EXPReward);
 }

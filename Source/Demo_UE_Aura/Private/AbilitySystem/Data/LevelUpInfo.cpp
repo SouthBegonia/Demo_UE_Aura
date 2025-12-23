@@ -37,6 +37,6 @@ int32 ULevelUpInfo::FindLevelForEXP(const int32 EXP) const
 			return MaxLevel;
 	}
 
-	UE_LOGFMT(LogAura, Log, "[%hs] : can't find the Level for target EXP=%d", __FUNCTION__, EXP);
+	UE_LOGFMT(LogAura, Log, "[{FUNC}] : can't find the Level for target EXP={EXP}", __FUNCTION__, EXP);
 	return 1;
 }

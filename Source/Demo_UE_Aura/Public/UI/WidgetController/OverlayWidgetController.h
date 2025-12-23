@@ -34,6 +34,7 @@ struct FUIWidgetRow : public FTableRowBase
 };
 
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangeSignature, int32, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangeSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FAuraAbilityInfo, Info);
@@ -72,6 +73,13 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="Aura|GAS|Message")
 	FAbilityInfoSignature AbilityInfoDelegate;
 
+
+	UPROPERTY(BlueprintAssignable, Category="Aura|GAS|EXP")
+	FOnAttributeChangeSignature OnEXPPercentChanged;
+
+	UPROPERTY(BlueprintAssignable, Category="Aura|GAS|Level")
+	FOnPlayerStatChangeSignature OnPlayerLevelChanged;
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Aura|Widget Data")
@@ -84,6 +92,8 @@ protected:
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
 
 	void OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC);
+
+	void OnPlayerEXPChanged(const int32 NewEXP) const;
 };
 
 template <typename T>

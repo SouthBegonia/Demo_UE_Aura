@@ -6,6 +6,8 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/AbilityInfo.h"
+#include "AbilitySystem/Data/LevelUpInfo.h"
+#include "Player/AuraPlayerState.h"
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
@@ -24,6 +26,7 @@ void UOverlayWidgetController::BroadcastInitialValues()
 void UOverlayWidgetController::BindCallbackToDependencies()
 {
 	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
+	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
 
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& AttributeChangeData)
 	{
@@ -65,6 +68,12 @@ void UOverlayWidgetController::BindCallbackToDependencies()
 			}
 		});
 	}
+
+	AuraPlayerState->OnPlayerEXPChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnPlayerEXPChanged);
+	AuraPlayerState->OnPlayerLevelChangedDelegate.AddLambda([this](int32 NewLevel)
+	{
+		OnPlayerLevelChanged.Broadcast(NewLevel);
+	});
 }
 
 void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemComponent* AuraASC)
@@ -86,4 +95,23 @@ void UOverlayWidgetController::OnInitializeStartupAbilities(UAuraAbilitySystemCo
 	});
 
 	AuraASC->ForEachAbility(BroadcastDelegate);
+}
+
+void UOverlayWidgetController::OnPlayerEXPChanged(const int32 NewEXP) const
+{
+	const AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	const ULevelUpInfo* LevelUpInfo = AuraPlayerState->LevelUpInfo;
+	checkf(LevelUpInfo, TEXT("Unable to find LevelUpInfo.  Please fill out AuraPlayerState::LevelUpInfo in BP"));
+
+	const int32 NowLevel = LevelUpInfo->FindLevelForEXP(NewEXP);
+
+	const int32 NowLevelUpRequirement = LevelUpInfo->GetLevelUpRequirement(NowLevel);
+	const int32 PreviousLevelUpRequirement = LevelUpInfo->GetLevelUpRequirement(NowLevel - 1);
+
+	const int32 DeltaLevelRequirement = NowLevelUpRequirement - PreviousLevelUpRequirement;
+	const int32 EXPForThisLevel = NewEXP - PreviousLevelUpRequirement;
+
+	const float EXPBarPercent = static_cast<float>(EXPForThisLevel) / static_cast<float>(DeltaLevelRequirement);
+
+	OnEXPPercentChanged.Broadcast(EXPBarPercent);
 }

@@ -265,10 +265,16 @@ public:
 	FGameplayAttributeData IncomingDamage;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, IncomingDamage);
 
+	UPROPERTY(BlueprintReadOnly, Category="Attributes|Meta")	//do not Replicate, only process on Server
+	FGameplayAttributeData IncomingEXP;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, IncomingEXP);
+
 #pragma endregion
 
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 
 	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bIsBlockedHit = false, bool bIsCriticalHit = false) const;
+
+	void SendEXPEvent(const FEffectProperties& Props);
 };
