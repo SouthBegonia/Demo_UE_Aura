@@ -7,6 +7,7 @@
 #include "Interaction/PlayerInterface.h"
 #include "AuraCharacter.generated.h"
 
+class UNiagaraComponent;
 class UCameraComponent;
 class USpringArmComponent;
 
@@ -20,6 +21,9 @@ class DEMO_UE_AURA_API AAuraCharacter : public AAuraCharacterBase, public IPlaye
 
 public:
 	AAuraCharacter();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
 
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
@@ -40,6 +44,10 @@ public:
 
 	virtual int32 GetAttributePointsReward_Implementation(int32 InLevel) const override;
 	virtual int32 GetSpellPointsReward_Implementation(int32 InLevel) const override;
+
+private:
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastLevelUpParticles() const;
 
 #pragma endregion
 

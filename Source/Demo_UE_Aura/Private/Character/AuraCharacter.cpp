@@ -5,12 +5,14 @@
 
 #include "AbilitySystemComponent.h"
 #include "AuraLogChannels.h"
+#include "NiagaraComponent.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Player/AuraPlayerController.h"
 #include "Player/AuraPlayerState.h"
 #include "UI/AuraHUD.h"
@@ -35,6 +37,12 @@ AAuraCharacter::AAuraCharacter()
 	CameraComp->SetupAttachment(SpringArm);
 
 	CharacterClass = ECharacterClass::Elementalist;
+
+	// NiagaraComponent
+	LevelUpNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>("LevelUpNiagaraComp");
+	//LevelUpNiagaraComponent->SetupAttachment(GetRootComponent());
+	LevelUpNiagaraComponent->AutoAttachParent = GetRootComponent();
+	LevelUpNiagaraComponent->bAutoActivate = false;
 }
 
 // Server Only
@@ -122,9 +130,25 @@ int32 AAuraCharacter::GetSpellPointsReward_Implementation(int32 InLevel) const
 	return 0;
 }
 
+// Execute On Server
 void AAuraCharacter::LevelUp_Implementation()
 {
-	//TODO
+	// Show LevelUp Effect
+	MulticastLevelUpParticles();
+}
+
+void AAuraCharacter::MulticastLevelUpParticles_Implementation() const
+{
+	if (IsValid(LevelUpNiagaraComponent))
+	{
+		const FVector CameraLocation = CameraComp->GetComponentLocation();
+		const FVector NiagaraSystemLocation = LevelUpNiagaraComponent->GetComponentLocation();
+
+		const FRotator ToCameraRotation = UKismetMathLibrary::FindLookAtRotation(NiagaraSystemLocation, CameraLocation);
+		LevelUpNiagaraComponent->SetWorldRotation(ToCameraRotation);
+
+		LevelUpNiagaraComponent->Activate(true);
+	}
 }
 
 int32 AAuraCharacter::FindLevelForEXp_Implementation(int32 InEXP) const
