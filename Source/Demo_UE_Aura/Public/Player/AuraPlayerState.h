@@ -64,6 +64,36 @@ private:
 #pragma endregion
 
 
+#pragma region AttributePoints, SpellPoints
+
+public:
+	FOnPlayerStatChangedSignature OnAttributePointsChangedDelegate;
+	FOnPlayerStatChangedSignature OnSpellPointsChangedDelegate;
+
+	FORCEINLINE int32 GetAttributePoints() const { return AttributePoints; }
+	FORCEINLINE int32 GetSpellPoints() const { return SpellPoints; }
+
+	void SetAttributePoints(const int32 InAttributePoints);
+	void SetSpellPoints(const int32 InSpellPoints);
+
+	FORCEINLINE void AddAttributePoints(const int32 InAttributePoints) { SetAttributePoints(GetAttributePoints() + InAttributePoints); }
+	FORCEINLINE void AddSpellPoints(const int32 InSpellPoints) { SetSpellPoints(GetSpellPoints() + InSpellPoints); }
+
+private:
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_AttributePoints)
+	int32 AttributePoints = 0;
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_SpellPoints)
+	int32 SpellPoints = 0;
+
+	UFUNCTION()
+	void OnRep_AttributePoints(int32 OldPoints);
+	UFUNCTION()
+	void OnRep_SpellPoints(int32 OldPoints);
+
+
+#pragma endregion
+
+
 #pragma region GAS
 
 public:

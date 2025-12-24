@@ -45,6 +45,7 @@ void UOverlayWidgetController::BindCallbackToDependencies()
 	const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
 	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
 
+	// GameplayAttributeValue Events
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetHealthAttribute()).AddLambda([this](const FOnAttributeChangeData& AttributeChangeData)
 	{
 		OnHealthChanged.Broadcast(AttributeChangeData.NewValue);
@@ -62,6 +63,7 @@ void UOverlayWidgetController::BindCallbackToDependencies()
 		OnMaxManaChanged.Broadcast(AttributeChangeData.NewValue);
 	});
 
+	// ASC Events
 	UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 	if (AuraASC != nullptr)
 	{
@@ -86,6 +88,7 @@ void UOverlayWidgetController::BindCallbackToDependencies()
 		});
 	}
 
+	// Player's Level、EXP Events
 	AuraPlayerState->OnPlayerEXPChangedDelegate.AddUObject(this, &UOverlayWidgetController::OnPlayerEXPChanged);
 	AuraPlayerState->OnPlayerLevelChangedDelegate.AddLambda([this](int32 NewLevel)
 	{
