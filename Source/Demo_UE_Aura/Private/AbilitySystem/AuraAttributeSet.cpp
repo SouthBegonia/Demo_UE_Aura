@@ -95,6 +95,23 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 #pragma endregion
 }
 
+void UAuraAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+{
+	Super::PostAttributeChange(Attribute, OldValue, NewValue);
+
+	// Recover Health、Mana as a bonus reward for Level up
+	if (Attribute == GetMaxHealthAttribute() && bTopOfHealth)
+	{
+		SetHealth(GetMaxHealth());
+		bTopOfHealth = false;
+	}
+	if (Attribute == GetMaxManaAttribute() && bTopOfMana)
+	{
+		SetMana(GetMaxMana());
+		bTopOfMana = false;
+	}
+}
+
 void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
@@ -199,8 +216,10 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 			if (bLevelUp)
 			{
 				// [BONUS EFFECT] - Recover Health、Mana
-				SetHealth(GetMaxHealth());
-				SetMana(GetMaxMana());
+				//SetHealth(GetMaxHealth());	// Level up will change MaxHealth/MaxMana later
+				//SetMana(GetMaxMana());
+				bTopOfHealth = true;
+				bTopOfMana = true;
 			}
 
 

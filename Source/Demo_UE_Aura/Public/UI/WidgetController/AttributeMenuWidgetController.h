@@ -32,6 +32,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="Aura|GAS|Attributes")
 	FOnPlayerStatChangeSignature SpellPointsChangedDelegate;
 
+	UFUNCTION(BlueprintCallable)
+	void UpgradeAttribute(const FGameplayTag& AttributeTag);
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UAttributeInfo> AttributeInfo;

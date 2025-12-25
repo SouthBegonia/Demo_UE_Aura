@@ -42,6 +42,9 @@ public:
 
 	virtual int32 FindLevelForEXp_Implementation(int32 InEXP) const override;
 
+	virtual int32 GetAttributePoints_Implementation() const override;
+	virtual int32 GetSpellPoints_Implementation() const override;
+
 	virtual int32 GetAttributePointsReward_Implementation(int32 InLevel) const override;
 	virtual int32 GetSpellPointsReward_Implementation(int32 InLevel) const override;
 

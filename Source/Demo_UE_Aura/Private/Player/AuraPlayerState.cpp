@@ -77,7 +77,7 @@ void AAuraPlayerState::OnRep_EXP(int32 OldEXP)
 
 void AAuraPlayerState::SetAttributePoints(const int32 InAttributePoints)
 {
-	check(InAttributePoints > 0)
+	check(InAttributePoints >= 0)
 
 	if (const bool bChanged = AttributePoints != InAttributePoints)
 	{
@@ -89,7 +89,7 @@ void AAuraPlayerState::SetAttributePoints(const int32 InAttributePoints)
 
 void AAuraPlayerState::SetSpellPoints(const int32 InSpellPoints)
 {
-	check(InSpellPoints > 0)
+	check(InSpellPoints >= 0)
 
 	if (const bool bChanged = SpellPoints != InSpellPoints)
 	{

@@ -57,6 +57,8 @@ public:
 
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
+	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
+
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
 
@@ -277,4 +279,7 @@ private:
 	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bIsBlockedHit = false, bool bIsCriticalHit = false) const;
 
 	void SendEXPEvent(const FEffectProperties& Props);
+
+	bool bTopOfHealth = false;
+	bool bTopOfMana = false;
 };

@@ -39,6 +39,16 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void LevelUp();
 
+	/*
+	 * How many AttributePoints does Player owned.
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	int32 GetAttributePoints() const;
+	/*
+	 * How many SpellPoints does Player owned.
+	 */
+	UFUNCTION(BlueprintNativeEvent)
+	int32 GetSpellPoints() const;
 
 	UFUNCTION(BlueprintNativeEvent)
 	int32 GetAttributePointsReward(int32 InLevel) const;
