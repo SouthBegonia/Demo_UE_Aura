@@ -6,9 +6,12 @@
 #include "AuraAbilityTypes.h"
 #include "Data/CharacterClassInfo.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "UI/WidgetController/AuraWidgetController.h"
 #include "AuraAbilitySystemLibrary.generated.h"
 
 
+class AAuraHUD;
+class USpellMenuWidgetController;
 class UAbilitySystemComponent;
 class UAttributeMenuWidgetController;
 class UOverlayWidgetController;
@@ -21,11 +24,12 @@ class DEMO_UE_AURA_API UAuraAbilitySystemLibrary : public UBlueprintFunctionLibr
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|WidgetController")
+	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|WidgetController", meta=(DefaultToSelf = "WorldContextObject"))
 	static UOverlayWidgetController* GetOverlayWidgetController(const UObject* WorldContextObject);
-
-	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|WidgetController")
+	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|WidgetController", meta=(DefaultToSelf = "WorldContextObject"))
 	static UAttributeMenuWidgetController* GetAttributeMenuWidgetController(const UObject* WorldContextObject);
+	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|WidgetController", meta=(DefaultToSelf = "WorldContextObject"))
+	static USpellMenuWidgetController* GetSpellMenuWidgetController(const UObject* WorldContextObject);
 
 
 	UFUNCTION(BlueprintCallable, Category="Aura|AbilitySystem|CharacterClassDefault")
@@ -56,4 +60,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="Aura|AbilitySystem|GameplayMechanics")
 	static int32 GetEXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 CharacterLevel);
+
+private:
+	static bool MakeWidgetController(const UObject* WorldContextObject, FWidgetControllerParams& OutWCParams, AAuraHUD*& OutAuraHUD);
 };

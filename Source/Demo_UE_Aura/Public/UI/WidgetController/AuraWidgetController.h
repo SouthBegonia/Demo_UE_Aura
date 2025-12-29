@@ -6,7 +6,13 @@
 #include "UObject/NoExportTypes.h"
 #include "AuraWidgetController.generated.h"
 
+class UAbilityInfo;
+class UAuraAttributeSet;
+class AAuraPlayerState;
+class UAuraAbilitySystemComponent;
+class AAuraPlayerController;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangeSignature, int32, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FAuraAbilityInfo&, Info);
 
 class UAttributeSet;
 class UAbilitySystemComponent;
@@ -51,7 +57,16 @@ public:
 
 	virtual void BindCallbackToDependencies();
 
+
+	UPROPERTY(BlueprintAssignable, Category="Aura|GAS|Message")
+	FAbilityInfoSignature AbilityInfoDelegate;
+
+	void BroadcastAbilityInfo();
+
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Aura|Widget Data")
+	TObjectPtr<UAbilityInfo> AbilityInfo;
+
 	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
 	TObjectPtr<APlayerController> PlayerController;
 
@@ -63,4 +78,19 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category="WidgetController")
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	AAuraPlayerController* GetAuraPC(bool bCheckValid = true);
+	AAuraPlayerState* GetAuraPS(bool bCheckValid = true);
+	UAuraAbilitySystemComponent* GetAuraASC(bool bCheckValid = true);
+	UAuraAttributeSet* GetAuraAS(bool bCheckValid = true);
+
+private:
+	UPROPERTY()
+	TWeakObjectPtr<AAuraPlayerController> AuraPlayerControllerPrivate;
+	UPROPERTY()
+	TWeakObjectPtr<AAuraPlayerState> AuraPlayerStatePrivate;
+	UPROPERTY()
+	TWeakObjectPtr<UAuraAbilitySystemComponent> AuraAbilitySystemComponentPrivate;
+	UPROPERTY()
+	TWeakObjectPtr<UAuraAttributeSet> AuraAttributeSetPrivate;
 };

@@ -9,8 +9,8 @@
 
 void UAttributeMenuWidgetController::BindCallbackToDependencies()
 {
-	UAuraAttributeSet* AS = CastChecked<UAuraAttributeSet>(AttributeSet);
-	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	UAuraAttributeSet* AS = GetAuraAS();
+	AAuraPlayerState* AuraPlayerState = GetAuraPS();
 
 	check(AttributeInfo)
 
@@ -37,8 +37,8 @@ void UAttributeMenuWidgetController::BindCallbackToDependencies()
 
 void UAttributeMenuWidgetController::BroadcastInitialValues()
 {
-	UAuraAttributeSet* AS = CastChecked<UAuraAttributeSet>(AttributeSet);
-	AAuraPlayerState* AuraPlayerState = CastChecked<AAuraPlayerState>(PlayerState);
+	UAuraAttributeSet* AS = GetAuraAS();
+	AAuraPlayerState* AuraPlayerState = GetAuraPS();
 
 	check(AttributeInfo)
 
@@ -53,7 +53,7 @@ void UAttributeMenuWidgetController::BroadcastInitialValues()
 
 void UAttributeMenuWidgetController::UpgradeAttribute(const FGameplayTag& AttributeTag)
 {
-	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	UAuraAbilitySystemComponent* AuraASC = GetAuraASC();
 	AuraASC->UpgradeAttribute(AttributeTag);
 }
 
