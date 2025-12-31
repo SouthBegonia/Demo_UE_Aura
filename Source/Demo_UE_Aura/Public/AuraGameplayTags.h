@@ -84,6 +84,7 @@ public:
 	FGameplayTag Abilities_HitReact;
 
 	FGameplayTag Abilities_Fire_FireBolt;
+	FGameplayTag Abilities_Lightning_Electrocute;
 
 	/*
 	 * Locked : The status of an ability that have not yet met the unlocking conditions

@@ -40,6 +40,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Aura|AbilitySystem|CharacterClassDefault")
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
+	UFUNCTION(BlueprintCallable, Category="Aura|AbilitySystem|AbilityInfo")
+	static UAbilityInfo* GetAbilityInfo(const UObject* WorldContextObject);
 
 
 	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|GameplayEffects")
