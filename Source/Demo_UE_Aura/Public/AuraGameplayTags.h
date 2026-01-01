@@ -78,6 +78,7 @@ public:
 
 #pragma region Abilities
 
+	FGameplayTag Abilities_None;
 	FGameplayTag Abilities_Attack;
 	FGameplayTag Abilities_Summon;
 
