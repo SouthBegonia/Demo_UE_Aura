@@ -59,4 +59,11 @@ protected:
 	void ClientEffectApplied(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle);
 
 	virtual void OnRep_ActivateAbilities() override;
+
+#pragma region Ability Description
+
+public:
+	bool GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription, FString& OutNextLevelDescription);
+
+#pragma endregion
 };

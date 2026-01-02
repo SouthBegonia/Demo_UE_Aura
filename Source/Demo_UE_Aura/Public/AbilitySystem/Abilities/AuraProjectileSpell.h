@@ -22,6 +22,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AAuraProjectile> ProjectileClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	int32 NumProjectiles = 5;
+
 	UFUNCTION(BlueprintCallable, Category="Aura|Projectile")
 	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch = false, float PitchOverride = 0.f);
+
+
+#pragma region Ability Description
+
+public:
+	virtual FString GetAbilityDescription(int32 AbilityLevel) override;
+	virtual FString GetNextAbilityDescription(int32 AbilityLevel) override;
+
+#pragma endregion
 };

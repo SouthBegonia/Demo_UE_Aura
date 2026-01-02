@@ -278,3 +278,27 @@ void UAuraAbilitySystemComponent::ClientEffectApplied_Implementation(UAbilitySys
 		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Blue, Msg);
 	}*/
 }
+
+#pragma region Ability Description
+
+bool UAuraAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag& AbilityTag, FString& OutDescription, FString& OutNextLevelDescription)
+{
+	if (const FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
+	{
+		// for unlocked Ability
+		if (UAuraGameplayAbility* AuraAbility = Cast<UAuraGameplayAbility>(AbilitySpec->Ability))
+		{
+			OutDescription = AuraAbility->GetAbilityDescription(AbilitySpec->Level);
+			OutNextLevelDescription = AuraAbility->GetNextAbilityDescription(AbilitySpec->Level + 1);
+			return true;
+		}
+	}
+
+	// for locked Ability
+	UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
+	OutDescription = UAuraGameplayAbility::GetLockedDescription(AbilityInfo->FindAbilityInfoForTag(AbilityTag, true).LevelRequirement);
+	OutNextLevelDescription = FString();
+	return false;
+}
+
+#pragma endregion

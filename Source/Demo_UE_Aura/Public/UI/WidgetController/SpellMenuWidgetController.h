@@ -9,6 +9,7 @@
 #include "SpellMenuWidgetController.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSpellGlobeSelectedSignature, bool, bSpendPointsButtonEnabled, bool, bEquipButtonEnabled);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FSpellDescriptionChangeSignature, FString, DescriptionString, FString, NextLevelDescriptionString);
 
 struct FSelectedAbility
 {
@@ -31,6 +32,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category="Aura")
 	FSpellGlobeSelectedSignature SpellGlobeSelectedDelegate;
 
+	UPROPERTY(BlueprintAssignable, Category="Aura")
+	FSpellDescriptionChangeSignature SpellDescriptionChangeDelegate;
+
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbackToDependencies() override;
 
@@ -47,4 +51,6 @@ private:
 
 	FSelectedAbility SelectedAbility = { FAuraGameplayTags::Get().Abilities_None, FAuraGameplayTags::Get().Abilities_Status_Locked };
 	int32 CurrentSpellPoints = 0;
+
+	void BroadcastSpellDescriptionUpdate(const FGameplayTag& AbilityTag);
 };

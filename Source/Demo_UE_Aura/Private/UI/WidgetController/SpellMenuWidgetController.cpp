@@ -39,6 +39,7 @@ void USpellMenuWidgetController::BindCallbackToDependencies()
 			bool bEnableEquip = false;
 			ShouldEnableButtons(StatusTag, CurrentSpellPoints, bEnableSpendPoints, bEnableEquip);
 			SpellGlobeSelectedDelegate.Broadcast(bEnableSpendPoints, bEnableEquip);
+			BroadcastSpellDescriptionUpdate(SelectedAbility.AbilityTag);
 		}
 	});
 
@@ -54,6 +55,7 @@ void USpellMenuWidgetController::BindCallbackToDependencies()
 		bool bEnableEquip = false;
 		ShouldEnableButtons(SelectedAbility.AbilityStatusTag, CurrentSpellPoints, bEnableSpendPoints, bEnableEquip);
 		SpellGlobeSelectedDelegate.Broadcast(bEnableSpendPoints, bEnableEquip);
+		BroadcastSpellDescriptionUpdate(SelectedAbility.AbilityTag);
 	});
 }
 
@@ -97,6 +99,7 @@ void USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityT
 
 	// Broadcast
 	SpellGlobeSelectedDelegate.Broadcast(bEnableSpendPoints, bEnableEquip);
+	BroadcastSpellDescriptionUpdate(SelectedAbility.AbilityTag);
 }
 
 void USpellMenuWidgetController::ShouldEnableButtons(const FGameplayTag& AbilityStatus, const int32 SpellPoints, bool& bShouldEnabledSpellPointsButton, bool& bShouldEnabledEquipButton)
@@ -122,5 +125,20 @@ void USpellMenuWidgetController::ShouldEnableButtons(const FGameplayTag& Ability
 	}
 	else if (AbilityStatus.MatchesTagExact(GameplayTags.Abilities_Status_Locked))
 	{
+	}
+}
+
+void USpellMenuWidgetController::BroadcastSpellDescriptionUpdate(const FGameplayTag& AbilityTag)
+{
+	if (GetAuraASC())
+	{
+		FString SpellNextLevelDescription;
+		FString SpellDescription;
+
+		// Description will be empty when AbilityTag invalid(unselect a spell) or AbilityTag=Abilities_None
+		if (AbilityTag.IsValid() && !AbilityTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_None))
+			GetAuraASC()->GetDescriptionsByAbilityTag(AbilityTag, SpellDescription, SpellNextLevelDescription);
+
+		SpellDescriptionChangeDelegate.Broadcast(SpellDescription, SpellNextLevelDescription);
 	}
 }
