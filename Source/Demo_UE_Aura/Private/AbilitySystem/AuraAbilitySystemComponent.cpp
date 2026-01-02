@@ -179,14 +179,63 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatus(const int32 PlayerLevel)
 			GiveAbility(AbilitySpec);
 			MarkAbilitySpecDirty(AbilitySpec);	// Replicate immediately
 
-			ClientUpdateAbilityStatus(Info.AbilityTag, FAuraGameplayTags::Get().Abilities_Status_Eligible);
+			ClientUpdateAbilityStatus(Info.AbilityTag, FAuraGameplayTags::Get().Abilities_Status_Eligible, 1);
 		}
 	}
 }
 
-void UAuraAbilitySystemComponent::ClientUpdateAbilityStatus_Implementation(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag)
+void UAuraAbilitySystemComponent::ServerSpendSpellPoint_Implementation(const FGameplayTag& AbilityTag)
 {
-	AbilityStatusChangedDelegate.Broadcast(AbilityTag, StatusTag);
+	// Check Spell Points valid
+	if (!GetAvatarActor()->Implements<UPlayerInterface>())
+	{
+		UE_LOGFMT(LogAura, Error, "[{FUNC}] : not implements [UPlayerInterface]", __FUNCTION__);
+		return;
+	}
+	if (IPlayerInterface::Execute_GetSpellPoints(GetAvatarActor()) <= 0)
+	{
+		UE_LOGFMT(LogAura, Error, "[{FUNC}] : no enough spell points", __FUNCTION__);
+		return;
+	}
+
+
+	const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+
+	if (FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
+	{
+		// Affect Ability
+		FGameplayTag Status = GetStatusFromSpec(*AbilitySpec);
+		if (Status.MatchesTagExact(GameplayTags.Abilities_Status_Eligible))
+		{
+			// Update Ability Status ； Eligible -> Unlock
+			AbilitySpec->GetDynamicSpecSourceTags().RemoveTag(GameplayTags.Abilities_Status_Eligible);
+			AbilitySpec->GetDynamicSpecSourceTags().AddTag(GameplayTags.Abilities_Status_Unlocked);
+			Status = GameplayTags.Abilities_Status_Unlocked;
+		}
+		else if (Status.MatchesTagExact(GameplayTags.Abilities_Status_Equipped) || Status.MatchesTagExact(GameplayTags.Abilities_Status_Unlocked))
+		{
+			// Upgrade Ability level : +1
+			AbilitySpec->Level += 1;
+		}
+		else
+		{
+			// Should not happen : The SpendSpellPointButton should not be Clicked when Ability Status is Abilities_Status_Locked
+			UE_LOGFMT(LogAura, Error, "[{FUNC}] : The SpendSpellPointButton should not be Clicked when Ability Status is Abilities_Status_Locked", __FUNCTION__);
+			check(false);
+		}
+
+		// Spend Spell Point
+		IPlayerInterface::Execute_AddToSpellPoints(GetAvatarActor(), -1);
+
+		// Broadcast Update
+		ClientUpdateAbilityStatus(AbilityTag, Status, AbilitySpec->Level);
+		MarkAbilitySpecDirty(*AbilitySpec);
+	}
+}
+
+void UAuraAbilitySystemComponent::ClientUpdateAbilityStatus_Implementation(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag, const int32 AbilityLevel)
+{
+	AbilityStatusChangedDelegate.Broadcast(AbilityTag, StatusTag, AbilityLevel);
 }
 
 void UAuraAbilitySystemComponent::ServerUpgradeAttribute_Implementation(const FGameplayTag& AttributeTag)

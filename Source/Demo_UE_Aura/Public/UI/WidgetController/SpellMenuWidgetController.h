@@ -34,6 +34,11 @@ public:
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbackToDependencies() override;
 
+
+	UFUNCTION(BlueprintCallable)
+	void SpendSpellPointsButtonClicked();
+
+
 	UFUNCTION(BlueprintCallable)
 	void SpellGlobeSelected(const FGameplayTag& AbilityTag);
 
