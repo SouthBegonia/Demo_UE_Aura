@@ -52,6 +52,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
 
+	/* Call when UUserWidget::Destruct() */
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	void OnWidgetDestruct();
+
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitialValues();
 
