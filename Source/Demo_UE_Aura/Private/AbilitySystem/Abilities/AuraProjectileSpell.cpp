@@ -5,10 +5,8 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "AuraGameplayTags.h"
 #include "Actor/AuraProjectile.h"
 #include "Interaction/CombatInterface.h"
-#include "Kismet/KismetSystemLibrary.h"
 
 void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                            const FGameplayEventData* TriggerEventData)
@@ -73,41 +71,3 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("%s    ScaleDamage = %f"), *this->GetName(), ScaleDamage), true, true);
 	}
 }
-
-#pragma region Ability Description
-
-FString UAuraProjectileSpell::GetAbilityDescription(int32 AbilityLevel)
-{
-	const int32 Damage = DamageTypesMap.Find(FAuraGameplayTags::Get().Damage_Fire)->GetValueAtLevel(AbilityLevel);
-
-	FString Description = FString::Printf(TEXT("<Title>FIRE BOLT</>\n"));
-	Description.Append(FString::Printf(TEXT("<Small>Level : </><Level>%d</>\n\n"), AbilityLevel));
-	if (AbilityLevel == 1)
-	{
-		Description.Append(FString::Printf(TEXT("<Default>Launches a bolt of fire, exploding on impact and dealing : </>")));
-	}
-	else
-	{
-		Description.Append(FString::Printf(TEXT("<Default>Launches %d bolt of fire, exploding on impact and dealing : </>"), FMath::Min(AbilityLevel, NumProjectiles)));
-	}
-
-	Description.Append(FString::Printf(TEXT("<Damage>%d</>"), Damage));
-	Description.Append(FString::Printf(TEXT("<Default> fire damage with a chance to burn</>\n\n")));
-
-	return Description;
-}
-
-FString UAuraProjectileSpell::GetNextAbilityDescription(int32 AbilityLevel)
-{
-	const int32 Damage = DamageTypesMap.Find(FAuraGameplayTags::Get().Damage_Fire)->GetValueAtLevel(AbilityLevel);
-
-	FString Description = FString::Printf(TEXT("<Title>NEXT LEVEL :</>\n"));
-	Description.Append(FString::Printf(TEXT("<Small>Level : </><Level>%d</>\n\n"), AbilityLevel));
-	Description.Append(FString::Printf(TEXT("<Default>Launches %d bolt of fire, exploding on impact and dealing : </>"), FMath::Min(AbilityLevel, NumProjectiles)));
-	Description.Append(FString::Printf(TEXT("<Damage>%d</>"), Damage));
-	Description.Append(FString::Printf(TEXT("<Default> fire damage with a chance to burn</>\n\n")));
-
-	return Description;
-}
-
-#pragma endregion

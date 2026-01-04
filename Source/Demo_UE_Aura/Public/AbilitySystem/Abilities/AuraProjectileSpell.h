@@ -27,13 +27,4 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category="Aura|Projectile")
 	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch = false, float PitchOverride = 0.f);
-
-
-#pragma region Ability Description
-
-public:
-	virtual FString GetAbilityDescription(int32 AbilityLevel) override;
-	virtual FString GetNextAbilityDescription(int32 AbilityLevel) override;
-
-#pragma endregion
 };

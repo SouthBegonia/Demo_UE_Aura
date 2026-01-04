@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AuraLogChannels.h"
 
 void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 {
@@ -29,4 +30,10 @@ FTaggedMontage UAuraDamageGameplayAbility::GetRandomTaggedMontageFromArray(const
 	}
 
 	return FTaggedMontage();
+}
+
+float UAuraDamageGameplayAbility::GetDamageByDamageType(float InAbilityLevel, const FGameplayTag& DamageTypeTag) const
+{
+	check(DamageTypesMap.Contains(DamageTypeTag))
+	return DamageTypesMap[DamageTypeTag].GetValueAtLevel(InAbilityLevel);
 }

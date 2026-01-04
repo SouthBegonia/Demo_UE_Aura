@@ -18,7 +18,16 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Aura|Input")
 	FGameplayTag StartupInputTag;
 
+#pragma region Ability Description
+
 	virtual FString GetAbilityDescription(int32 AbilityLevel);
 	virtual FString GetNextAbilityDescription(int32 AbilityLevel);
 	static FString GetLockedDescription(int32 Level);
+
+#pragma endregion
+
+protected:
+
+	float GetManaCost(float InAbilityLevel = 1.f) const;
+	float GetCooldown(float InAbilityLevel = 1.f) const;
 };
