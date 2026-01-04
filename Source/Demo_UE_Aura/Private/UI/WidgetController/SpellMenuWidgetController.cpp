@@ -75,7 +75,7 @@ void USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityT
 	FGameplayTag AbilityStatus = GameplayTags.Abilities_Status_Locked;
 
 	const bool bTagValid = AbilityTag.IsValid();
-	const bool bTagNone = AbilityTag.MatchesTag(GameplayTags.Abilities_None);
+	const bool bTagNone = AbilityTag.MatchesTag(GameplayTags.Abilities_None);	// unset or deselect
 	const bool bSpecValid = AbilitySpec != nullptr;
 
 
