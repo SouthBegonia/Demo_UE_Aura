@@ -16,6 +16,9 @@ void USpellMenuWidgetController::OnWidgetDestruct_Implementation()
 	SpellDescriptionChangeDelegate.Clear();
 	WaitForEquipSelectionDelegate.Clear();
 
+	// Clear Data
+	bWaitingForEquipSelection = false;
+
 	Super::OnWidgetDestruct_Implementation();
 }
 
@@ -54,6 +57,9 @@ void USpellMenuWidgetController::BindCallbackToDependencies()
 		}
 	});
 
+	// Bind Event - Equipped Ability
+	GetAuraASC()->AbilityEquippedDelegate.AddUObject(this, &USpellMenuWidgetController::OnAbilityEquipped);
+
 	// Bind Event - SpellPointsChanged
 	AuraPlayerState->OnSpellPointsChangedDelegate.AddLambda([&](const int32 CurrentPoints)
 	{
@@ -83,6 +89,30 @@ void USpellMenuWidgetController::EquipButtonClicked()
 
 	WaitForEquipSelectionDelegate.Broadcast(AbilityTypeTag);
 	bWaitingForEquipSelection = true;
+
+	const FGameplayTag SelectedStatus = GetAuraASC()->GetStatusFromAbilityTag(SelectedAbility.AbilityTag);
+	if (SelectedStatus.MatchesTagExact(FAuraGameplayTags::Get().Abilities_Status_Equipped))
+	{
+		SelectedSlot = GetAuraASC()->GetInputTagFromAbilityTag(SelectedAbility.AbilityTag);
+	}
+}
+
+void USpellMenuWidgetController::SpellRowGlobeClicked(const FGameplayTag& SlotTag, const FGameplayTag& AbilityType)
+{
+	// SlotTag is equivalent to InputTag
+
+	if (!bWaitingForEquipSelection)
+		return;
+
+	check(SlotTag.IsValid() && AbilityType.IsValid())
+
+	// Check selected ability against the slot's ability type (Offensive spell couldn't be equipped Passive slot)
+	const FGameplayTag& SelectedAbilityTypeTag = SelectedAbility.AbilityTypeTag;
+	if (!SelectedAbilityTypeTag.IsValid() || !SelectedAbilityTypeTag.MatchesTagExact(AbilityType))
+		return;
+
+	// Try To Equip Ability
+	GetAuraASC()->ServerEquipAbility(SelectedAbility.AbilityTag, SlotTag);
 }
 
 void USpellMenuWidgetController::SpellGlobeSelected(const FGameplayTag& AbilityTag)
@@ -164,4 +194,24 @@ void USpellMenuWidgetController::BroadcastSpellDescriptionUpdate(const FGameplay
 
 		SpellDescriptionChangeDelegate.Broadcast(SpellDescription, SpellNextLevelDescription);
 	}
+}
+
+void USpellMenuWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PrevSlot)
+{
+	bWaitingForEquipSelection = false;
+
+	FAuraAbilityInfo LastSlotInfo;
+	LastSlotInfo.StatusTag = FAuraGameplayTags::Get().Abilities_Status_Unlocked;
+	LastSlotInfo.InputTag = PrevSlot;
+	LastSlotInfo.AbilityTag = FAuraGameplayTags::Get().Abilities_None;
+	// Broadcast empty info if PreviousSlot is a valid slot. Only if Equipping an already-equipped spell
+	AbilityInfoDelegate.Broadcast(LastSlotInfo);
+
+	// Broadcast AbilityInfo Equipped
+	FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+	Info.StatusTag = Status;
+	Info.InputTag = Slot;
+	AbilityInfoDelegate.Broadcast(Info);
+
+	WaitForEquipSelectionDelegate.Broadcast(FGameplayTag());
 }

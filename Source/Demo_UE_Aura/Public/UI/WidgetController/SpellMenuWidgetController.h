@@ -52,6 +52,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EquipButtonClicked();
 
+	UFUNCTION(BlueprintCallable)
+	void SpellRowGlobeClicked(const FGameplayTag& SlotTag, const FGameplayTag& AbilityType);
+
 
 	UFUNCTION(BlueprintCallable)
 	void SpellGlobeSelected(const FGameplayTag& AbilityTag);
@@ -59,10 +62,14 @@ public:
 private:
 	void ShouldEnableButtons(const FGameplayTag& AbilityStatus, const int32 SpellPoints, bool& bShouldEnabledSpellPointsButton, bool& bShouldEnabledEquipButton);
 
+	void BroadcastSpellDescriptionUpdate(const FGameplayTag& AbilityTag);
+
+	int32 CurrentSpellPoints = 0;
+
 	bool bWaitingForEquipSelection = false;
 
 	FSelectedAbility SelectedAbility = { FAuraGameplayTags::Get().Abilities_None, FAuraGameplayTags::Get().Abilities_Status_Locked };
-	int32 CurrentSpellPoints = 0;
+	FGameplayTag SelectedSlot;
 
-	void BroadcastSpellDescriptionUpdate(const FGameplayTag& AbilityTag);
+	void OnAbilityEquipped(const FGameplayTag& AbilityTag, const FGameplayTag& Status, const FGameplayTag& Slot, const FGameplayTag& PrevSlot);
 };
