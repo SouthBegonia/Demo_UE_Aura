@@ -27,15 +27,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Aura|Damage")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
-	/*
-	 * Which type of Damage does this GA can execute
-	 */
 	UPROPERTY(EditDefaultsOnly, Category="Aura|Damage")
-	TMap<FGameplayTag, FScalableFloat> DamageTypesMap;
+	FGameplayTag DamageTypeTag;
+
+	UPROPERTY(EditDefaultsOnly, Category="Aura|Damage")
+	FScalableFloat DamageScalableFloat;
 
 
 	UFUNCTION(BlueprintPure, Category="Aura")
 	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
 
-	float GetDamageByDamageType(float InAbilityLevel, const FGameplayTag& DamageTypeTag) const;
+	float GetDamageValue(float InAbilityLevel) const;
 };

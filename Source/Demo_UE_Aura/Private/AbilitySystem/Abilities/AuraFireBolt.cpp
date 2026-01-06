@@ -3,13 +3,11 @@
 
 #include "AbilitySystem/Abilities/AuraFireBolt.h"
 
-#include "AuraGameplayTags.h"
-
 #pragma region Ability Description
 
 FString UAuraFireBolt::GetAbilityDescription(int32 AbilityLevel)
 {
-	const int32 Damage = GetDamageByDamageType(AbilityLevel, FAuraGameplayTags::Get().Damage_Fire);
+	const int32 Damage = GetDamageValue(AbilityLevel);
 
 	FString Description = FString::Printf(TEXT("<Title>FIRE BOLT</>\n"));
 
@@ -30,7 +28,7 @@ FString UAuraFireBolt::GetAbilityDescription(int32 AbilityLevel)
 
 FString UAuraFireBolt::GetNextAbilityDescription(int32 AbilityLevel)
 {
-	const int32 Damage = GetDamageByDamageType(AbilityLevel, FAuraGameplayTags::Get().Damage_Fire);
+	const int32 Damage = GetDamageValue(AbilityLevel);
 
 	FString Description = FString::Printf(TEXT("<Title>NEXT LEVEL :</>\n"));
 
