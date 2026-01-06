@@ -214,4 +214,7 @@ void USpellMenuWidgetController::OnAbilityEquipped(const FGameplayTag& AbilityTa
 	AbilityInfoDelegate.Broadcast(Info);
 
 	WaitForEquipSelectionDelegate.Broadcast(FGameplayTag());
+
+	// Deselect
+	SpellGlobeSelected(FAuraGameplayTags::Get().Abilities_None);
 }
