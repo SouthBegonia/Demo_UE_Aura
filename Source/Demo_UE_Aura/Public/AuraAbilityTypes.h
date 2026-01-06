@@ -3,6 +3,59 @@
 #include "GameplayEffectTypes.h"
 #include "AuraAbilityTypes.generated.h"
 
+class UGameplayEffect;
+
+USTRUCT(BlueprintType)
+struct FAbilityDebuffConfig
+{
+	GENERATED_BODY()
+
+	FAbilityDebuffConfig() {}
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float DebuffChance = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float DebuffDamage = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float DebuffFrequency = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float DebuffDuration = 0.f;
+};
+
+
+USTRUCT(BlueprintType)
+struct FDamageEffectParams
+{
+	GENERATED_BODY()
+
+	FDamageEffectParams() {}
+
+	/* The AvatarActor of causer */
+	UPROPERTY()
+	TWeakObjectPtr<UObject> WorldContextObject = nullptr;
+
+	UPROPERTY()
+	TWeakObjectPtr<UAbilitySystemComponent> SourceASC;
+	UPROPERTY()
+	TWeakObjectPtr<UAbilitySystemComponent> TargetASC;
+
+	UPROPERTY()
+	int32 AbilityLevel = 1;
+
+	UPROPERTY()
+	TSubclassOf<UGameplayEffect> DamageEffectClass = nullptr;
+	UPROPERTY()
+	float BaseDamage = 0.f;
+	UPROPERTY()
+	FGameplayTag DamageType = FGameplayTag();
+
+	UPROPERTY()
+	FAbilityDebuffConfig DebuffConfig = FAbilityDebuffConfig();
+};
+
 USTRUCT(BlueprintType)
 struct FAuraGameplayEffectContext : public FGameplayEffectContext
 {

@@ -12,11 +12,29 @@ void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 	const FGameplayEffectSpecHandle SpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, 1.f);
 	// set all Types of Damage by CallerMagnitude
 	const float ScaleDamage = GetDamageValue(GetAbilityLevel());
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageTypeTag, ScaleDamage);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GetDamageType(), ScaleDamage);
 
 
 	// Apply GE to Target
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
+}
+
+FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor) const
+{
+	FDamageEffectParams Params;
+	Params.WorldContextObject = GetAvatarActorFromActorInfo();
+
+	Params.SourceASC = GetAbilitySystemComponentFromActorInfo();
+	Params.TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+
+	Params.AbilityLevel = GetAbilityLevel();
+	Params.DamageEffectClass = GetDamageEffectClass();
+	Params.BaseDamage = GetDamageValue(GetAbilityLevel());
+	Params.DamageType = GetDamageType();
+
+	Params.DebuffConfig = GetAbilityDebuffConfig();
+
+	return Params;
 }
 
 FTaggedMontage UAuraDamageGameplayAbility::GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const

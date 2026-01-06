@@ -42,29 +42,11 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
 			);
 
-		// Generate FGameplayEffectSpecHandle
-		const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
-		FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
-		EffectContextHandle.AddSourceObject(Projectile);
-		EffectContextHandle.SetAbility(this);
-		TArray<TWeakObjectPtr<AActor>> Actors;
-		Actors.Add(Projectile);
-		EffectContextHandle.AddActors(Actors);
-		FHitResult HitResult;
-		HitResult.Location = ProjectileTargetLocation;
-		EffectContextHandle.AddHitResult(HitResult);
-
-		const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
-		// set all Types of Damage by CallerMagnitude
-		const float ScaleDamage = GetDamageValue(GetAbilityLevel());
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageTypeTag, ScaleDamage);
-
-
-		Projectile->DamageEffectSpecHandle = SpecHandle;
+		// Generate FDamageEffectParams, then will Apply GE Damage on AAuraProjectile::OnSphereOverlap()
+		FDamageEffectParams DamageEffectParams = MakeDamageEffectParamsFromClassDefaults(nullptr);  // Only after AAuraProjectile::OnSphereOverlap() will get TargetActor
+		Projectile->DamageEffectParams = DamageEffectParams;
 
 		// Generate Projectile Done
 		Projectile->FinishSpawning(SpawnTransform);
-
-		//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("%s    ScaleDamage = %f"), *this->GetName(), ScaleDamage), true, true);
 	}
 }

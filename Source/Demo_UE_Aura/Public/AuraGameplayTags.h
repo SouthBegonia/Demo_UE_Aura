@@ -76,6 +76,27 @@ public:
 #pragma endregion
 
 
+#pragma region Debuff
+
+	FGameplayTag Debuff_Type_Burn;
+	FGameplayTag Debuff_Type_Stun;
+	FGameplayTag Debuff_Type_Arcane;
+	FGameplayTag Debuff_Type_Physical;
+
+	FGameplayTag Debuff_Chance;
+	FGameplayTag Debuff_Damage;
+	FGameplayTag Debuff_Duration;
+	FGameplayTag Debuff_Frequency;
+
+	/*
+	 * Map of Damage Types to Debuff
+	 *	- ex: key = Damage_Fire, value = Debuff_Burn
+	 */
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToDebuffTypeMap;
+
+#pragma endregion
+
+
 #pragma region Abilities
 
 	FGameplayTag Abilities_None;

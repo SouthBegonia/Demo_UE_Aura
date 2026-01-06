@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AuraAbilityTypes.h"
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
 #include "Interaction/CombatInterface.h"
 #include "AuraDamageGameplayAbility.generated.h"
@@ -22,9 +23,20 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Aura|Damage", meta=(ToolTip="Apply Damage GE to Target"))
 	void CauseDamage(AActor* TargetActor);
 
-protected:
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Aura|Damage")
+protected:
+	FORCEINLINE TSubclassOf<UGameplayEffect> GetDamageEffectClass() const { return DamageEffectClass; }
+	FORCEINLINE FGameplayTag GetDamageType() const { return DamageTypeTag; }
+	float GetDamageValue(float InAbilityLevel) const;
+
+	FORCEINLINE FAbilityDebuffConfig GetAbilityDebuffConfig() const { return DebuffConfig; }
+
+	UFUNCTION(BlueprintPure, Category="Aura")
+	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
+
+private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Aura|Damage", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UGameplayEffect> DamageEffectClass;
 
 	UPROPERTY(EditDefaultsOnly, Category="Aura|Damage")
@@ -34,8 +46,11 @@ protected:
 	FScalableFloat DamageScalableFloat;
 
 
-	UFUNCTION(BlueprintPure, Category="Aura")
-	FTaggedMontage GetRandomTaggedMontageFromArray(const TArray<FTaggedMontage>& TaggedMontages) const;
+#pragma region Debuff
 
-	float GetDamageValue(float InAbilityLevel) const;
+private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Aura|Damage", meta = (AllowPrivateAccess = "true"))
+	FAbilityDebuffConfig DebuffConfig;
+
+#pragma endregion
 };

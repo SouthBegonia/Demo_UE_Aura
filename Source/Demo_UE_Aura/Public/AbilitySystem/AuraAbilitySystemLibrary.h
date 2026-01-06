@@ -63,6 +63,9 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category="Aura|AbilitySystem|GameplayMechanics")
 	static int32 GetEXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 CharacterLevel);
 
+	UFUNCTION(BlueprintCallable, Category="Aura|AbilitySystem|DamageEffect")
+	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
+
 private:
 	static bool MakeWidgetController(const UObject* WorldContextObject, FWidgetControllerParams& OutWCParams, AAuraHUD*& OutAuraHUD);
 };
