@@ -21,6 +21,8 @@ class DEMO_UE_AURA_API UAttributeMenuWidgetController : public UAuraWidgetContro
 	GENERATED_BODY()
 
 public:
+	virtual void OnWidgetDestruct_Implementation() override;
+
 	virtual void BindCallbackToDependencies() override;
 	virtual void BroadcastInitialValues() override;
 

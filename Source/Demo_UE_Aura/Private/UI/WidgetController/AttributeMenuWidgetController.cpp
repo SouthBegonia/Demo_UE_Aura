@@ -7,6 +7,16 @@
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Player/AuraPlayerState.h"
 
+void UAttributeMenuWidgetController::OnWidgetDestruct_Implementation()
+{
+	// Unbind Events when UI close
+	AttributeInfoDelegate.Clear();
+	AttributePointsChangedDelegate.Clear();
+	SpellPointsChangedDelegate.Clear();
+
+	Super::OnWidgetDestruct_Implementation();
+}
+
 void UAttributeMenuWidgetController::BindCallbackToDependencies()
 {
 	UAuraAttributeSet* AS = GetAuraAS();
