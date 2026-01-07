@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 #include "AuraLogChannels.h"
 
 void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
@@ -33,6 +34,7 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	Params.DamageType = GetDamageType();
 
 	Params.DebuffConfig = GetAbilityDebuffConfig();
+	Params.DebuffConfig.DebuffType = FAuraGameplayTags::Get().DamageTypesToDebuffTypeMap[GetDamageType()];
 
 	return Params;
 }

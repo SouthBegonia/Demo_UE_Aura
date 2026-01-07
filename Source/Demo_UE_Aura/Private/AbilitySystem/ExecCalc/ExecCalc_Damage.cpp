@@ -161,6 +161,44 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		TargetDamageResistanceMap.Add(DamageResistanceAttributeTag, ResistanceValue);
 	}
 
+	/*
+	 * TargetDebuffMap
+	 *	- Usage : Record the DebuffConfig(ex. DebuffChance、DebuffDamage...) of different damage types
+	*	- Value Source : SetByCallerMagnitude
+	*	- Key = GameplayTag to ResistanceAttribute, Value = FAbilityDebuffConfig
+	*
+	*	- [ATTENTION] : There might be no one or at most one effective DebuffData from Spec,
+	*					Because only one DebuffTypeTag is passed on each Execute_Implementation. (see UAuraAbilitySystemLibrary::ApplyDamageEffect())
+	 */
+	TMap<FGameplayTag, FAbilityDebuffConfig> TargetDebuffMap;
+	for (const TPair<FGameplayTag, FGameplayTag>& Pair : FAuraGameplayTags::Get().DamageTypesToDebuffTypeMap)
+	{
+		const FGameplayTag DamageTypeTag = Pair.Key;
+		const FGameplayTag DebuffTypeTag = Pair.Value;
+		const FGameplayTag DamageResistanceAttributeTag = FAuraGameplayTags::Get().DamageTypesToResistancesMap[DamageTypeTag];
+
+		FAbilityDebuffConfig DebuffConfig;
+		if (Spec.GetSetByCallerMagnitude(DebuffTypeTag, false, -1.f) > 0.f)
+		{
+			DebuffConfig.DebuffType = DebuffTypeTag;
+			DebuffConfig.DebuffChance = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Debuff_Chance, false, -1.f);
+			DebuffConfig.DebuffDamage = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Debuff_Damage, false, -1.f);
+			DebuffConfig.DebuffFrequency = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Debuff_Frequency, false, -1.f);
+			DebuffConfig.DebuffDuration = Spec.GetSetByCallerMagnitude(FAuraGameplayTags::Get().Debuff_Duration, false, -1.f);
+		}
+		else
+		{
+			// this not the corresponding debuff type in Spec
+			DebuffConfig.DebuffType = FGameplayTag();
+			DebuffConfig.DebuffChance = -1.f;
+			DebuffConfig.DebuffDamage = -1.f;
+			DebuffConfig.DebuffFrequency = -1.f;
+			DebuffConfig.DebuffDuration = -1.f;
+		}
+
+		TargetDebuffMap.Add(DamageResistanceAttributeTag, DebuffConfig);
+	}
+
 
 	/*
 	 * BlockChance
@@ -261,6 +299,27 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 		// TODO : is CriticalHitResistance use for Reduces CriticalHitChance or Reduces CriticalHitDamage?
 	}
 
+	// Debuff : Probabilistic trigger. Once triggered, it will cause debuff damage
+	bool bTriggerDebuff = false;
+	FAbilityDebuffConfig TriggeredDebuffConfig;
+	for (const TPair<FGameplayTag, FAbilityDebuffConfig>& DebuffMap : TargetDebuffMap)
+	{
+		const FGameplayTag& DamageTypeResistanceAttributeTag = DebuffMap.Key;
+		const FAbilityDebuffConfig& DebuffConfig = DebuffMap.Value;
+
+		if (DebuffConfig.DebuffType.IsValid() && DebuffConfig.DebuffChance > -.5f)	// It has the possibility to trigger Debuff
+		{
+			const float DamageTypeResistanceValue = TargetDamageResistanceMap[DamageTypeResistanceAttributeTag];
+			const float EffectiveDebuffChance = DebuffConfig.DebuffChance * (100 - DamageTypeResistanceValue) / 100.f;
+
+			bTriggerDebuff = FMath::RandRange(1, 100) < EffectiveDebuffChance;
+			if (bTriggerDebuff)	// Trigger Debuff Successful
+			{
+				TriggeredDebuffConfig = DebuffConfig;
+			}
+		}
+	}
+
 #pragma endregion
 	
 
@@ -272,6 +331,19 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	// CriticalHit
 	UAuraAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bCriticalHit);
+
+	// Debuff
+	if (bTriggerDebuff)
+	{
+		UAuraAbilitySystemLibrary::SetIsSuccessfulDebuff(EffectContextHandle, true);
+
+		const FGameplayTag DamageType = *FAuraGameplayTags::Get().DamageTypesToDebuffTypeMap.FindKey(TriggeredDebuffConfig.DebuffType);
+		UAuraAbilitySystemLibrary::SetDamageType(EffectContextHandle, DamageType);
+		UAuraAbilitySystemLibrary::SetDebuffDamage(EffectContextHandle, TriggeredDebuffConfig.DebuffDamage);
+		UAuraAbilitySystemLibrary::SetDebuffDuration(EffectContextHandle, TriggeredDebuffConfig.DebuffDuration);
+		UAuraAbilitySystemLibrary::SetDebuffFrequency(EffectContextHandle, TriggeredDebuffConfig.DebuffFrequency);
+	}
+
 
 #pragma endregion
 

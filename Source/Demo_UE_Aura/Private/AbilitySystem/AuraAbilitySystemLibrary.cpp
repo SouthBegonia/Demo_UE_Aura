@@ -127,6 +127,40 @@ bool UAuraAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle
 	return AuraEffectContext ? AuraEffectContext->IsCriticalHit() : false;
 }
 
+bool UAuraAbilitySystemLibrary::IsSuccessfulDebuff(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	const FAuraGameplayEffectContext* AuraEffectContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get());
+	return AuraEffectContext ? AuraEffectContext->IsSuccessfulDebuff() : false;
+}
+
+float UAuraAbilitySystemLibrary::GetDebuffDamage(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	const FAuraGameplayEffectContext* AuraEffectContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get());
+	return AuraEffectContext ? AuraEffectContext->GetDebuffDamage() : 0.f;
+}
+
+float UAuraAbilitySystemLibrary::GetDebuffDuration(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	const FAuraGameplayEffectContext* AuraEffectContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get());
+	return AuraEffectContext ? AuraEffectContext->GetDebuffDuration() : 0.f;
+}
+
+float UAuraAbilitySystemLibrary::GetDebuffFrequency(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	const FAuraGameplayEffectContext* AuraEffectContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get());
+	return AuraEffectContext ? AuraEffectContext->GetDebuffFrequency() : 0.f;
+}
+
+FGameplayTag UAuraAbilitySystemLibrary::GetDamageType(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	const FAuraGameplayEffectContext* AuraEffectContext = static_cast<const FAuraGameplayEffectContext*>(EffectContextHandle.Get());
+	if (AuraEffectContext != nullptr && AuraEffectContext->GetDamageType().IsValid())
+	{
+		return *AuraEffectContext->GetDamageType().Get();
+	}
+	return FGameplayTag();
+}
+
 void UAuraAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& EffectContextHandle, const bool bInIsBlocked)
 {
 	if (FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
@@ -140,6 +174,46 @@ void UAuraAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& E
 	if (FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
 	{
 		AuraEffectContext->SetIsCriticalHit(bInIsCriticalHit);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetIsSuccessfulDebuff(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsSuccessfulDebuff)
+{
+	if (FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		AuraEffectContext->SetIsSuccessfulDebuff(bInIsSuccessfulDebuff);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetDebuffDamage(FGameplayEffectContextHandle& EffectContextHandle, float InDebuffDamage)
+{
+	if (FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		AuraEffectContext->SetDebuffDamage(InDebuffDamage);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetDebuffDuration(FGameplayEffectContextHandle& EffectContextHandle, float InDebuffDuration)
+{
+	if (FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		AuraEffectContext->SetDebuffDuration(InDebuffDuration);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetDebuffFrequency(FGameplayEffectContextHandle& EffectContextHandle, float InDebuffFrequency)
+{
+	if (FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		AuraEffectContext->SetDebuffFrequency(InDebuffFrequency);
+	}
+}
+
+void UAuraAbilitySystemLibrary::SetDamageType(FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InDamageType)
+{
+	if (FAuraGameplayEffectContext* AuraEffectContext = static_cast<FAuraGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		AuraEffectContext->SetDamageType(MakeShared<FGameplayTag>(InDamageType));
 	}
 }
 
@@ -212,6 +286,8 @@ FGameplayEffectContextHandle UAuraAbilitySystemLibrary::ApplyDamageEffect(const 
 	const FGameplayEffectSpecHandle SpecHandle = DamageEffectParams.SourceASC->MakeOutgoingSpec(DamageEffectParams.DamageEffectClass, DamageEffectParams.AbilityLevel, EffectContextHandle);
 
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageEffectParams.DamageType, DamageEffectParams.BaseDamage);
+
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Tags.DamageTypesToDebuffTypeMap[DamageEffectParams.DamageType], 1.f);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Tags.Debuff_Chance, DamageEffectParams.DebuffConfig.DebuffChance);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Tags.Debuff_Damage, DamageEffectParams.DebuffConfig.DebuffDamage);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, Tags.Debuff_Duration, DamageEffectParams.DebuffConfig.DebuffDuration);

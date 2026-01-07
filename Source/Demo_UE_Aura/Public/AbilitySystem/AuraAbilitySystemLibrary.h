@@ -48,11 +48,31 @@ public:
 	static bool IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle);
 	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|GameplayEffects")
 	static bool IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle);
+	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|GameplayEffects")
+	static bool IsSuccessfulDebuff(const FGameplayEffectContextHandle& EffectContextHandle);
+	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|GameplayEffects")
+	static float GetDebuffDamage(const FGameplayEffectContextHandle& EffectContextHandle);
+	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|GameplayEffects")
+	static float GetDebuffDuration(const FGameplayEffectContextHandle& EffectContextHandle);
+	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|GameplayEffects")
+	static float GetDebuffFrequency(const FGameplayEffectContextHandle& EffectContextHandle);
+	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|GameplayEffects")
+	static FGameplayTag GetDamageType(const FGameplayEffectContextHandle& EffectContextHandle);
 
 	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|GameplayEffects")
 	static void SetIsBlockedHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlocked);
 	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|GameplayEffects")
 	static void SetIsCriticalHit(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsCriticalHit);
+	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|GameplayEffects")
+	static void SetIsSuccessfulDebuff(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, bool bInIsSuccessfulDebuff);
+	UFUNCTION(BlueprintPure, Category="Aura|AbilitySystem|GameplayEffects")
+	static void SetDebuffDamage(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, float InDebuffDamage);
+	UFUNCTION(BlueprintCallable, Category="Aura|AbilitySystem|GameplayEffects")
+	static void SetDebuffDuration(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, float InDebuffDuration);
+	UFUNCTION(BlueprintCallable, Category="Aura|AbilitySystem|GameplayEffects")
+	static void SetDebuffFrequency(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, float InDebuffFrequency);
+	UFUNCTION(BlueprintCallable, Category="Aura|AbilitySystem|GameplayEffects")
+	static void SetDamageType(UPARAM(ref) FGameplayEffectContextHandle& EffectContextHandle, const FGameplayTag& InDamageType);
 
 	UFUNCTION(BlueprintCallable, Category="Aura|AbilitySystem|GameplayMechanics")
 	static void GetLivePlayersWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& ActorsToIgnore, float SphereRadius, const FVector& SphereOrigin);
