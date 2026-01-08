@@ -8,7 +8,11 @@
 #include "UObject/Interface.h"
 #include "CombatInterface.generated.h"
 
+class UAbilitySystemComponent;
 class UNiagaraSystem;
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegistered, UAbilitySystemComponent*);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeath, AActor*, DeadActor);
 
 USTRUCT(BlueprintType)
 struct FTaggedMontage
@@ -44,6 +48,9 @@ class DEMO_UE_AURA_API ICombatInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() = 0;
+	virtual FOnDeath& GetOnDeathDelegate() = 0;
+
 	UFUNCTION(BlueprintNativeEvent)
 	int32 GetPlayerLevel();
 

@@ -9,6 +9,7 @@
 #include "AuraCharacterBase.generated.h"
 
 
+class UDebuffNiagaraComponent;
 class UNiagaraSystem;
 class UGameplayAbility;
 class UGameplayEffect;
@@ -88,6 +89,9 @@ protected:
 	TObjectPtr<USoundBase> DeathSound;
 
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Aura|Combat")
+	TObjectPtr<UDebuffNiagaraComponent> BurnDebuffNiagaraComponent;
+
 #pragma endregion
 
 #pragma region Combat - Summon
@@ -111,6 +115,12 @@ protected:
 
 public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	FOnASCRegistered OnAscRegisteredDelegate;
+	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
+
+	FOnDeath OnDeathDelegate;
+	virtual FOnDeath& GetOnDeathDelegate() override;
 
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 

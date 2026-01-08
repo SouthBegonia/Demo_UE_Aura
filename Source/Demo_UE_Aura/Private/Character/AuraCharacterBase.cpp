@@ -7,6 +7,7 @@
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Demo_UE_Aura/Demo_UE_Aura.h"
 #include "Kismet/GameplayStatics.h"
@@ -24,6 +25,10 @@ AAuraCharacterBase::AAuraCharacterBase()
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_PROJECTILE, ECR_Overlap);
 	GetMesh()->SetGenerateOverlapEvents(true);
+
+	BurnDebuffNiagaraComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>("BurnDebuffNiagaraComp");
+	BurnDebuffNiagaraComponent->SetupAttachment(GetRootComponent());
+	BurnDebuffNiagaraComponent->DebuffTag = FAuraGameplayTags::Get().Debuff_Type_Burn;
 }
 
 FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
@@ -106,6 +111,16 @@ UAbilitySystemComponent* AAuraCharacterBase::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
+FOnASCRegistered& AAuraCharacterBase::GetOnASCRegisteredDelegate()
+{
+	return OnAscRegisteredDelegate;
+}
+
+FOnDeath& AAuraCharacterBase::GetOnDeathDelegate()
+{
+	return OnDeathDelegate;
+}
+
 void AAuraCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -167,6 +182,7 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation()
 
 	Dissolve();
 	bDead = true;
+	OnDeathDelegate.Broadcast(this);
 }
 
 #pragma region Combat - Summon
