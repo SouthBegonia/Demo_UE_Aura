@@ -30,9 +30,9 @@ protected:
 #pragma region Combat
 
 public:
-	virtual void Die() override;
+	virtual void Die(const FVector& DeathImpulse = FVector::ZeroVector) override;
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastHandleDeath();
+	virtual void MulticastHandleDeath(const FVector& DeathImpulse = FVector::ZeroVector);
 
 	UPROPERTY(EditAnywhere, Category="Aura|Combat")
 	TArray<FTaggedMontage> AttackMontages;

@@ -36,6 +36,8 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	Params.DebuffConfig = GetAbilityDebuffConfig();
 	Params.DebuffConfig.DebuffType = FAuraGameplayTags::Get().DamageTypesToDebuffTypeMap[GetDamageType()];
 
+	Params.DeathImpulseMagnitude = DeathImpulseMagnitude;
+
 	return Params;
 }
 

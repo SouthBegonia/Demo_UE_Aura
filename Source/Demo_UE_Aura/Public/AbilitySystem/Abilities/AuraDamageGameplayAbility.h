@@ -45,6 +45,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Aura|Damage")
 	FScalableFloat DamageScalableFloat;
 
+	UPROPERTY(EditDefaultsOnly, Category="Aura|Damage")
+	float DeathImpulseMagnitude = 60.f;
+
 
 #pragma region Debuff
 
