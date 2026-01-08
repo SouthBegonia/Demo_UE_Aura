@@ -23,6 +23,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Aura|Damage", meta=(ToolTip="Apply Damage GE to Target"))
 	void CauseDamage(AActor* TargetActor);
 
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Aura|Damage")
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
 
 protected:
@@ -45,14 +46,20 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Aura|Damage")
 	FScalableFloat DamageScalableFloat;
 
-	UPROPERTY(EditDefaultsOnly, Category="Aura|Damage")
-	float DeathImpulseMagnitude = 60.f;
+	UPROPERTY(EditDefaultsOnly, Category="Aura|Damage|DamageEffectParams")
+	float DeathImpulseMagnitude = 1000.f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Aura|Damage|DamageEffectParams")
+	float KnockbackForceMagnitude = 300.f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Aura|Damage|DamageEffectParams")
+	float KnockbackChance = 0.f;
 
 
 #pragma region Debuff
 
 private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Aura|Damage", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Aura|Damage|DamageEffectParams", meta = (AllowPrivateAccess = "true"))
 	FAbilityDebuffConfig DebuffConfig;
 
 #pragma endregion

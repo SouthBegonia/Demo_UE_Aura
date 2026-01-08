@@ -7,7 +7,9 @@
 #include "AbilitySystemComponent.h"
 #include "AuraGameplayTags.h"
 #include "AuraLogChannels.h"
+#include "Kismet/KismetMathLibrary.h"
 
+// One of the ways to Apply Damage GE (ex. GA_MeleeAttack
 void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 {
 	const FGameplayEffectSpecHandle SpecHandle = MakeOutgoingGameplayEffectSpec(DamageEffectClass, 1.f);
@@ -20,6 +22,7 @@ void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
 }
 
+// One of the ways to Apply Damage GE, then will call UAuraAbilitySystemLibrary::ApplyDamageEffect()  (ex. GA_FireBolt
 FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor) const
 {
 	FDamageEffectParams Params;
@@ -37,6 +40,24 @@ FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassD
 	Params.DebuffConfig.DebuffType = FAuraGameplayTags::Get().DamageTypesToDebuffTypeMap[GetDamageType()];
 
 	Params.DeathImpulseMagnitude = DeathImpulseMagnitude;
+	Params.KnockbackForceMagnitude = KnockbackForceMagnitude;
+	Params.KnockbackChance = KnockbackChance;
+
+	if (IsValid(TargetActor))
+	{
+		const FRotator FaceTargetRotation = UKismetMathLibrary::FindLookAtRotation(GetAvatarActorFromActorInfo()->GetActorLocation(), TargetActor->GetActorLocation());
+
+		const FVector DeathImpulse = FaceTargetRotation.Vector();
+		Params.DeathImpulse = DeathImpulse;
+
+		if (const bool bKnockback = FMath::RandRange(1, 100) < Params.KnockbackChance)
+		{
+			FRotator KnockbackRotation = FaceTargetRotation;
+			KnockbackRotation.Pitch = 45.f;
+			const FVector KnockbackDirection = KnockbackRotation.Vector();
+			Params.KnockbackForce = KnockbackDirection * Params.KnockbackForceMagnitude;
+		}
+	}
 
 	return Params;
 }
