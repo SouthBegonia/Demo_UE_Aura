@@ -21,6 +21,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Aura|FireBolt")
 	int32 MaxNumProjectiles = 5;
 
+	UPROPERTY(EditDefaultsOnly, Category="Aura|FireBolt")
+	float HomingAccelerationMin = 1600.f;
+	UPROPERTY(EditDefaultsOnly, Category="Aura|FireBolt")
+	float HomingAccelerationMax = 3200.f;
+
 private:
 	/* Only for Debug, get truly NumProjectiles by GetNumProjectiles()  */
 	UPROPERTY(EditDefaultsOnly, Category="Aura|FireBolt")
@@ -28,7 +33,7 @@ private:
 
 protected:
 	UFUNCTION(BlueprintCallable, Category="Aura|FireBolt")
-	void SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch = false, float PitchOverride = 0.f);
+	void SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch = false, float PitchOverride = 0.f, AActor* HomingTargetActor = nullptr);
 
 	FORCEINLINE int32 GetNumProjectiles() const { return FMath::Min(MaxNumProjectiles, GetAbilityLevel()); }
 

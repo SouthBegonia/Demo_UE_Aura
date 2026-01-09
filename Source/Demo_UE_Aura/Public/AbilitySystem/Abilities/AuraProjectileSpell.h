@@ -8,6 +8,26 @@
 #include "AuraProjectileSpell.generated.h"
 
 class AAuraProjectile;
+
+USTRUCT()
+struct FAuraSpawnProjectileParams
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FVector SpawnLocation = FVector::ZeroVector;
+	UPROPERTY()
+	FRotator SpawnRotation = FRotator::ZeroRotator;
+
+	UPROPERTY()
+	TWeakObjectPtr<AActor> HomingTargetActor = nullptr;
+	UPROPERTY()
+	FVector HomingTargetLocation = FVector::ZeroVector;
+	UPROPERTY()
+	float HomingAcceleration = 1000.f;
+};
+
+
 /**
  * 
  */
@@ -30,6 +50,5 @@ protected:
 	UFUNCTION(BlueprintCallable, Category="Aura|Projectile")
 	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch = false, float PitchOverride = 0.f);
 
-
-	void GenerateAndSpawnProjectile(const FVector& Location, const FRotator& Rotation) const;
+	void GenerateAndSpawnProjectile(const FAuraSpawnProjectileParams& SpawnParams) const;
 };

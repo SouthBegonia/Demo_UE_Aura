@@ -52,6 +52,11 @@ void AAuraProjectile::Destroyed()
 	{
 		OnHit();
 	}
+	if (IsValid(HomingTargetSceneComponent))
+	{
+		HomingTargetSceneComponent->DestroyComponent();
+	}
+
 	Super::Destroyed();
 }
 

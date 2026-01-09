@@ -3,9 +3,10 @@
 
 #include "AbilitySystem/Abilities/AuraFireBolt.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "Actor/AuraProjectile.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride)
+void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, AActor* HomingTargetActor)
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
@@ -16,23 +17,39 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 	if (DebugNumProjectiles > 0)
 		SpawnProjectilesCount = DebugNumProjectiles;
 
+	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), SocketTag);
+	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+	if (bOverridePitch)
+	{
+		Rotation.Pitch = PitchOverride;
+	}
+
 	if (SpawnProjectilesCount == 1)
-		SpawnProjectile(ProjectileTargetLocation, SocketTag, bOverridePitch, PitchOverride);
+	{
+		FAuraSpawnProjectileParams SpawnParams;
+		SpawnParams.SpawnLocation = SocketLocation;
+		SpawnParams.SpawnRotation = Rotation;
+		SpawnParams.HomingTargetActor = HomingTargetActor;
+		SpawnParams.HomingTargetLocation = ProjectileTargetLocation;
+		SpawnParams.HomingAcceleration = FMath::RandRange(HomingAccelerationMin, HomingAccelerationMax);
+
+		GenerateAndSpawnProjectile(SpawnParams);
+	}
 	else
 	{
-		const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(GetAvatarActorFromActorInfo(), SocketTag);
-		FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
-		if (bOverridePitch)
-		{
-			Rotation.Pitch = PitchOverride;
-		}
-
 		const FVector Forward = Rotation.Vector();
 		TArray<FRotator> Rotations = UAuraAbilitySystemLibrary::EvenlySpacedRotators(Forward, FVector::UpVector, ProjectileSpread, SpawnProjectilesCount);
 
 		for (FRotator& Rot : Rotations)
 		{
-			GenerateAndSpawnProjectile(SocketLocation, Rot);
+			FAuraSpawnProjectileParams SpawnParams;
+			SpawnParams.SpawnLocation = SocketLocation;
+			SpawnParams.SpawnRotation = Rot;
+			SpawnParams.HomingTargetActor = HomingTargetActor;
+			SpawnParams.HomingTargetLocation = ProjectileTargetLocation;
+			SpawnParams.HomingAcceleration = FMath::RandRange(HomingAccelerationMin, HomingAccelerationMax);
+
+			GenerateAndSpawnProjectile(SpawnParams);
 		}
 
 		if (bDrawDebugLine)

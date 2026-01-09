@@ -23,6 +23,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
+	UPROPERTY()
+	TObjectPtr<USceneComponent> HomingTargetSceneComponent;
+
 	UPROPERTY(BlueprintReadWrite, meta=(ExposeOnSpawn = true))
 	FDamageEffectParams DamageEffectParams;
 
