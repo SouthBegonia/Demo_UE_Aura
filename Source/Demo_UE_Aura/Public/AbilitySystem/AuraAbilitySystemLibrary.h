@@ -94,6 +94,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Aura|AbilitySystem|DamageEffect")
 	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
 
+	UFUNCTION(BlueprintCallable, Category="Aura|AbilitySystem|GameplayMechanics")
+	static TArray<FRotator> EvenlySpacedRotators(const FVector& Forward, const FVector& Axis, float Spread, int32 NumRotators);
+	UFUNCTION(BlueprintCallable, Category="Aura|AbilitySystem|GameplayMechanics")
+	static TArray<FVector> EvenlyRotatedVectors(const FVector& Forward, const FVector& Axis, float Spread, int32 NumVectors);
+
 private:
 	static bool MakeWidgetController(const UObject* WorldContextObject, FWidgetControllerParams& OutWCParams, AAuraHUD*& OutAuraHUD);
 };

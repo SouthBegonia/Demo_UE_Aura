@@ -14,6 +14,24 @@ class DEMO_UE_AURA_API UAuraFireBolt : public UAuraProjectileSpell
 {
 	GENERATED_BODY()
 
+protected:
+	UPROPERTY(EditDefaultsOnly, Category="Aura|FireBolt")
+	float ProjectileSpread = 90.f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Aura|FireBolt")
+	int32 MaxNumProjectiles = 5;
+
+private:
+	/* Only for Debug, get truly NumProjectiles by GetNumProjectiles()  */
+	UPROPERTY(EditDefaultsOnly, Category="Aura|FireBolt")
+	int32 DebugNumProjectiles = -1;
+
+protected:
+	UFUNCTION(BlueprintCallable, Category="Aura|FireBolt")
+	void SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch = false, float PitchOverride = 0.f);
+
+	FORCEINLINE int32 GetNumProjectiles() const { return FMath::Min(MaxNumProjectiles, GetAbilityLevel()); }
+
 #pragma region Ability Description
 
 public:

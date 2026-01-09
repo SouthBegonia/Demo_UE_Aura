@@ -358,3 +358,55 @@ bool UAuraAbilitySystemLibrary::MakeWidgetController(const UObject* WorldContext
 
 	return false;
 }
+
+TArray<FRotator> UAuraAbilitySystemLibrary::EvenlySpacedRotators(const FVector& Forward, const FVector& Axis, float Spread, int32 NumRotators)
+{
+	check(NumRotators > 0)
+
+	TArray<FRotator> Rotators;
+
+	if (NumRotators > 1)
+	{
+		const FVector LeftOfSpread = Forward.RotateAngleAxis(-Spread / 2.f, Axis);
+		const FVector RightOfSpread = Forward.RotateAngleAxis(Spread / 2.f, Axis);
+		const float DeltaSpread = Spread / (NumRotators - 1);
+
+		for (int32 i = 0; i < NumRotators; i++)
+		{
+			const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, Axis);
+			Rotators.Add(Direction.Rotation());
+		}
+	}
+	else
+	{
+		Rotators.Add(Forward.Rotation());
+	}
+
+	return Rotators;
+}
+
+TArray<FVector> UAuraAbilitySystemLibrary::EvenlyRotatedVectors(const FVector& Forward, const FVector& Axis, float Spread, int32 NumVectors)
+{
+	check(NumVectors > 0)
+
+	TArray<FVector> Vectors;
+
+	if (NumVectors > 1)
+	{
+		const FVector LeftOfSpread = Forward.RotateAngleAxis(-Spread / 2.f, Axis);
+		const FVector RightOfSpread = Forward.RotateAngleAxis(Spread / 2.f, Axis);
+		const float DeltaSpread = Spread / (NumVectors - 1);
+
+		for (int32 i = 0; i < NumVectors; i++)
+		{
+			const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, Axis);
+			Vectors.Add(Direction);
+		}
+	}
+	else
+	{
+		Vectors.Add(Forward);
+	}
+
+	return Vectors;
+}
