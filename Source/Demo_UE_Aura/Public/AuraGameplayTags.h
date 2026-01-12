@@ -151,6 +151,16 @@ public:
 #pragma endregion
 
 
+#pragma region Player
+
+	FGameplayTag Player_Block_InputPressed;
+	FGameplayTag Player_Block_InputHeld;
+	FGameplayTag Player_Block_InputReleased;
+	FGameplayTag Player_Block_CursorTrace;
+
+#pragma endregion
+
+
 #pragma region Montage
 
 	FGameplayTag Montage_Attack_1;

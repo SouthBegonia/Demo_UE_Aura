@@ -54,8 +54,6 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 
-	CursorHitOnTick();
-
 	CursorTrace();
 	AutoRun();
 }
@@ -67,6 +65,17 @@ void AAuraPlayerController::CursorHitOnTick()
 
 void AAuraPlayerController::CursorTrace()
 {
+	// CursorTrace Block
+	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))
+	{
+		if (LastActor) LastActor->UnHighlightActor();
+		if (ThisActor) ThisActor->UnHighlightActor();
+		LastActor = nullptr;
+		ThisActor = nullptr;
+		return;
+	}
+
+	CursorHitOnTick();
 	if (!CursorHitResultOnTick.bBlockingHit)
 		return;
 
@@ -128,6 +137,9 @@ UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
 
 void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 {
+	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
+		return;
+
 	const FVector2D InputAxisVector2D = InputActionValue.Get<FVector2D>();
 	const FRotator Rotation = GetControlRotation();
 	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
@@ -149,6 +161,9 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
 	//GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Green, FString::Printf(TEXT("Pressed    InputTag = %s"), *InputTag.ToString()));
 
+	if (GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
+		return;
+
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
 		bTargeting = ThisActor ? true : false;
@@ -164,6 +179,10 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 	//GEngine->AddOnScreenDebugMessage(2, 1.f, FColor::Red, FString::Printf(TEXT("Released    InputTag = %s"), *InputTag.ToString()));
 	if (GetASC() == nullptr)
 		return;
+
+	if (GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputReleased))
+		return;
+
 	GetASC()->AbilityInputTagReleased(InputTag);
 
 	// released
@@ -189,23 +208,26 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
 		{
 			// Click LMB to Move : Navigation
-			if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
+			if (GetASC() && !GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
 			{
-				Spline->ClearSplinePoints();
-				for (const FVector& PathPoint : NavPath->PathPoints)
+				if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
 				{
-					Spline->AddSplinePoint(PathPoint, ESplineCoordinateSpace::World);
-					//DrawDebugSphere(GetWorld(), PathPoint, 8.f, 8, FColor::Green, false, 5.f);
-				}
-				if (Spline->GetNumberOfSplinePoints() > 0)
-				{
-					CachedDestination = NavPath->PathPoints.Last();
-					bAutoRunning = true;
+					Spline->ClearSplinePoints();
+					for (const FVector& PathPoint : NavPath->PathPoints)
+					{
+						Spline->AddSplinePoint(PathPoint, ESplineCoordinateSpace::World);
+						//DrawDebugSphere(GetWorld(), PathPoint, 8.f, 8, FColor::Green, false, 5.f);
+					}
+					if (Spline->GetNumberOfSplinePoints() > 0)
+					{
+						CachedDestination = NavPath->PathPoints.Last();
+						bAutoRunning = true;
 
-					UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
-				}else
-				{
-					bAutoRunning = false;
+						UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
+					}else
+					{
+						bAutoRunning = false;
+					}
 				}
 			}
 		}
@@ -218,6 +240,9 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
 	//GEngine->AddOnScreenDebugMessage(3, 1.f, FColor::Black, FString::Printf(TEXT("Held    InputTag = %s"), *InputTag.ToString()));
+
+	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputHeld))
+		return;
 
 	// held
 	if (!InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
