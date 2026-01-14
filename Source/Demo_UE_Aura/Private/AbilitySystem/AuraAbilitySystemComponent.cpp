@@ -349,7 +349,7 @@ bool UAuraAbilitySystemComponent::AbilityHasSlot(const FGameplayAbilitySpec& Abi
 	return AbilitySpec.GetDynamicSpecSourceTags().HasTagExact(Slot);
 }
 
-void UAuraAbilitySystemComponent::ClientEquipAbility(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag, const FGameplayTag& Slot, const FGameplayTag& PrevSlot)
+void UAuraAbilitySystemComponent::ClientEquipAbility_Implementation(const FGameplayTag& AbilityTag, const FGameplayTag& StatusTag, const FGameplayTag& Slot, const FGameplayTag& PrevSlot)
 {
 	AbilityEquippedDelegate.Broadcast(AbilityTag, StatusTag, Slot, PrevSlot);
 }
