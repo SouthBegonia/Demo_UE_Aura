@@ -120,8 +120,8 @@ public:
 	FOnASCRegistered OnAscRegisteredDelegate;
 	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() override;
 
-	FOnDeath OnDeathDelegate;
-	virtual FOnDeath& GetOnDeathDelegate() override;
+	FOnDeathSignature OnDeathDelegate;
+	virtual FOnDeathSignature& GetOnDeathDelegate() override;
 
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 

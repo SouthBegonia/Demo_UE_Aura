@@ -21,7 +21,22 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StoreOwnerVariables();
 
+	UFUNCTION(BlueprintCallable)
+	void TraceFirstTarget(const FVector& BeamTargetLocation);
+
+	UFUNCTION(BlueprintCallable)
+	void StoreAdditionalTarget(TArray<AActor*>& OutAdditionalTargets);
+
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PrimaryTargetDied(AActor* DeadActor);
+	UFUNCTION(BlueprintImplementableEvent)
+	void AdditionalTargetDied(AActor* DeadActor);
+
 protected:
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+
+
 	UPROPERTY(BlueprintReadWrite, Category="Aura|Beam")
 	FVector MouseHitLocation;
 
@@ -33,4 +48,7 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, Category="Aura|Beam")
 	TWeakObjectPtr<ACharacter> OwnerCharacter;
+
+	UPROPERTY(EditDefaultsOnly, Category="Aura|Beam")
+	int32 MaxNumShockTarget = 5;
 };

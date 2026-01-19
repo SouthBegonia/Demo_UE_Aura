@@ -23,6 +23,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Aura|Damage", meta=(ToolTip="Apply Damage GE to Target"))
 	void CauseDamage(AActor* TargetActor);
 
+	UFUNCTION(BlueprintPure, Category = "Aura|Damage")
+	float GetDamageAtLevel() const;
+
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Aura|Damage")
 	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
 

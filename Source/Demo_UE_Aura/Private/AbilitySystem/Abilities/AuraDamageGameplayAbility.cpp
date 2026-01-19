@@ -22,6 +22,11 @@ void UAuraDamageGameplayAbility::CauseDamage(AActor* TargetActor)
 	GetAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
 }
 
+float UAuraDamageGameplayAbility::GetDamageAtLevel() const
+{
+	return GetDamageValue(GetAbilityLevel());
+}
+
 // One of the ways to Apply Damage GE, then will call UAuraAbilitySystemLibrary::ApplyDamageEffect()  (ex. GA_FireBolt
 FDamageEffectParams UAuraDamageGameplayAbility::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor) const
 {
