@@ -6,5 +6,5 @@
 
 #define CUSTOM_DEPTH_RED 250
 
-#define ECC_PROJECTILE ECollisionChannel::ECC_EngineTraceChannel1
-#define ECC_TARGET ECollisionChannel::ECC_EngineTraceChannel2
+#define ECC_PROJECTILE ECollisionChannel::ECC_GameTraceChannel1
+#define ECC_TARGET ECollisionChannel::ECC_GameTraceChannel2
