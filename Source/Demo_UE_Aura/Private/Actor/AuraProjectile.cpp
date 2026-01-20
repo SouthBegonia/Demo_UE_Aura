@@ -39,6 +39,7 @@ void AAuraProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetReplicateMovement(true);
 	SetLifeSpan(LifeSpanTime);
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &AAuraProjectile::OnSphereOverlap);
 
@@ -70,6 +71,9 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
                                       bool bFromSweep, const FHitResult& SweepResult)
 {
 	// GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Black, FString::Printf(TEXT("AAuraProjectile::OnSphereOverlap    OtherActor = %s"), *OtherActor->GetName()));
+
+	if (DamageEffectParams.SourceASC == nullptr)
+		return;
 
 	AActor* SourceAvatarActor = DamageEffectParams.SourceASC->GetAvatarActor();
 	if (SourceAvatarActor == OtherActor)

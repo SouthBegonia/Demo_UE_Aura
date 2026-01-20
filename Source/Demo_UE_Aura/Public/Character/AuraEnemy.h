@@ -28,6 +28,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
 	virtual void InitializeDefaultAttributes() const override;
+	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
 
 
 	UPROPERTY(BlueprintAssignable)
@@ -53,8 +54,7 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category="Aura|Combat")
 	bool bHitReacting = false;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Combat")
-	float BaseWalkSpeed = 250.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Combat")
 	float LifeSpan = 5.f;
 

@@ -263,7 +263,7 @@ void UAuraAttributeSet::HandleDebuff(const FEffectProperties& Props)
 {
 	const FAuraGameplayTags& Tags = FAuraGameplayTags::Get();
 
-	// Debuff Info
+	// ===== Debuff Info =====
 	const FGameplayTag DamageType = UAuraAbilitySystemLibrary::GetDamageType(Props.EffectContextHandle);
 	const float DebuffDamage = UAuraAbilitySystemLibrary::GetDebuffDamage(Props.EffectContextHandle);
 	const float DebuffDuration = UAuraAbilitySystemLibrary::GetDebuffDuration(Props.EffectContextHandle);
@@ -271,7 +271,7 @@ void UAuraAttributeSet::HandleDebuff(const FEffectProperties& Props)
 	const FGameplayTag& DebuffType = Tags.DamageTypesToDebuffTypeMap[DamageType];
 
 
-	// Create Debuff GE
+	// ===== Create Debuff GE =====
 	FGameplayEffectContextHandle EffectContext = Props.SourceASC->MakeEffectContext();
 	EffectContext.AddSourceObject(Props.SourceAvatarActor);
 
@@ -294,7 +294,16 @@ void UAuraAttributeSet::HandleDebuff(const FEffectProperties& Props)
 	ModifierInfo.ModifierOp = EGameplayModOp::Additive;
 	ModifierInfo.Attribute = UAuraAttributeSet::GetIncomingDamageAttribute();
 
-	// Apply Debuff GE
+	// Stun
+	if (DebuffType.MatchesTagExact(Tags.Debuff_Type_Stun))
+	{
+		Effect->CachedGrantedTags.AddTag(Tags.Player_Block_CursorTrace);
+		Effect->CachedGrantedTags.AddTag(Tags.Player_Block_InputPressed);
+		Effect->CachedGrantedTags.AddTag(Tags.Player_Block_InputHeld);
+		Effect->CachedGrantedTags.AddTag(Tags.Player_Block_InputReleased);
+	}
+
+	// ===== Apply Debuff GE =====
 	if (FGameplayEffectSpec* MutableSpec = new FGameplayEffectSpec(Effect, EffectContext, 1.f))
 	{
 		FAuraGameplayEffectContext* AuraContext = static_cast<FAuraGameplayEffectContext*>(MutableSpec->GetContext().Get());

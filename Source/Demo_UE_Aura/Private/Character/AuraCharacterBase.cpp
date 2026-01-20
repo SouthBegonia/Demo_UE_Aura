@@ -10,7 +10,9 @@
 #include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Demo_UE_Aura/Demo_UE_Aura.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 AAuraCharacterBase::AAuraCharacterBase()
 {
@@ -29,6 +31,17 @@ AAuraCharacterBase::AAuraCharacterBase()
 	BurnDebuffNiagaraComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>("BurnDebuffNiagaraComp");
 	BurnDebuffNiagaraComponent->SetupAttachment(GetRootComponent());
 	BurnDebuffNiagaraComponent->DebuffTag = FAuraGameplayTags::Get().Debuff_Type_Burn;
+	StunDebuffNiagaraComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>("StunDebuffNiagaraComp");
+	StunDebuffNiagaraComponent->SetupAttachment(GetRootComponent());
+	StunDebuffNiagaraComponent->DebuffTag = FAuraGameplayTags::Get().Debuff_Type_Stun;
+}
+
+void AAuraCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AAuraCharacterBase, bIsStunned);
+	DOREPLIFETIME(AAuraCharacterBase, bIsBurned);
 }
 
 FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
@@ -170,6 +183,20 @@ void AAuraCharacterBase::Die(const FVector& DeathImpulse)
 	MulticastHandleDeath(DeathImpulse);
 }
 
+void AAuraCharacterBase::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bIsStunned = NewCount > 0;
+	GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : BaseWalkSpeed;
+}
+
+void AAuraCharacterBase::OnRep_Burned()
+{
+}
+
+void AAuraCharacterBase::OnRep_Stunned()
+{
+}
+
 void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& DeathImpulse)
 {
 	Weapon->SetSimulatePhysics(true);
@@ -184,6 +211,9 @@ void AAuraCharacterBase::MulticastHandleDeath_Implementation(const FVector& Deat
 	GetMesh()->AddImpulse(DeathImpulse, NAME_None, true);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	BurnDebuffNiagaraComponent->Deactivate();
+	StunDebuffNiagaraComponent->Deactivate();
 
 	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation(), GetActorRotation());
 

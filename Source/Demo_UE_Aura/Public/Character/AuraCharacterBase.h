@@ -23,9 +23,13 @@ class DEMO_UE_AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySy
 
 public:
 	AAuraCharacterBase();
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Combat")
+	float BaseWalkSpeed = 600.f;
 
 #pragma region Combat
 
@@ -36,6 +40,18 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Aura|Combat")
 	TArray<FTaggedMontage> AttackMontages;
+
+	UPROPERTY(ReplicatedUsing=OnRep_Burned, BlueprintReadOnly, Category="Aura|Combat")
+	bool bIsBurned = false;
+	UFUNCTION()
+	virtual void OnRep_Burned();
+
+	UPROPERTY(ReplicatedUsing=OnRep_Stunned, BlueprintReadOnly, Category="Aura|Combat")
+	bool bIsStunned = false;
+	UFUNCTION()
+	virtual void OnRep_Stunned();
+
+	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Character Class Defaults")
@@ -92,6 +108,8 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Aura|Combat")
 	TObjectPtr<UDebuffNiagaraComponent> BurnDebuffNiagaraComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Aura|Combat")
+	TObjectPtr<UDebuffNiagaraComponent> StunDebuffNiagaraComponent;
 
 #pragma endregion
 

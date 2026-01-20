@@ -31,6 +31,9 @@ public:
 
 	virtual int32 GetPlayerLevel_Implementation() override;
 
+	virtual void OnRep_Burned() override;
+	virtual void OnRep_Stunned() override;
+
 #pragma region PlayerInterface
 	virtual int32 GetEXP_Implementation() override;
 

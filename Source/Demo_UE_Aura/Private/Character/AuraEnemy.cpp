@@ -18,6 +18,8 @@
 
 AAuraEnemy::AAuraEnemy()
 {
+	BaseWalkSpeed = 250.f;
+
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
 
 	bUseControllerRotationPitch = false;
@@ -103,6 +105,8 @@ void AAuraEnemy::InitAbilityActorInfo()
 		InitializeDefaultAttributes();
 	}
 	OnAscRegisteredDelegate.Broadcast(AbilitySystemComponent);
+
+	AbilitySystemComponent->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Debuff_Type_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAuraEnemy::StunTagChanged);
 }
 
 void AAuraEnemy::InitializeDefaultAttributes() const
@@ -110,6 +114,14 @@ void AAuraEnemy::InitializeDefaultAttributes() const
 	//Super::InitializeDefaultAttributes();
 
 	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
+}
+
+void AAuraEnemy::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	Super::StunTagChanged(CallbackTag, NewCount);
+
+	if (AuraAIController && AuraAIController->GetBlackboardComponent())
+		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("Stunned"), bIsStunned);
 }
 
 void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
