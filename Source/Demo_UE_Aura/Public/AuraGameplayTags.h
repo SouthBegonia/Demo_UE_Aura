@@ -105,8 +105,15 @@ public:
 
 	FGameplayTag Abilities_HitReact;
 
+	// Offensive
 	FGameplayTag Abilities_Fire_FireBolt;
 	FGameplayTag Abilities_Lightning_Electrocute;
+
+
+	// Passive
+	FGameplayTag Abilities_Passive_HaloOfProtection;
+	FGameplayTag Abilities_Passive_LifeSiphon;
+	FGameplayTag Abilities_Passive_ManaSiphon;
 
 	/*
 	 * Locked : The status of an ability that have not yet met the unlocking conditions
