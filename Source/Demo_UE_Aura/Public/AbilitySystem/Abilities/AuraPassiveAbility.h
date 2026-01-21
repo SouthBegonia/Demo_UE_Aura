@@ -14,6 +14,8 @@ class DEMO_UE_AURA_API UAuraPassiveAbility : public UAuraGameplayAbility
 {
 	GENERATED_BODY()
 
+	UAuraPassiveAbility();
+
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 

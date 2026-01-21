@@ -6,6 +6,11 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 
+UAuraPassiveAbility::UAuraPassiveAbility()
+{
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
+}
+
 void UAuraPassiveAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                           const FGameplayEventData* TriggerEventData)
 {
