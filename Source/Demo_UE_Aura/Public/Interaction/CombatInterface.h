@@ -105,8 +105,15 @@ public:
 #pragma region Shock
 
 public:
+	/* Set character playing ShockLoop Montage */
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetInShockLoop(bool bInLoop);
+
+	/* Is character under Lighting Attack, then will play special HitReact Montage */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool IsBeingShocked() const;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void SetIsBeingShocked(bool bInShock);
 
 #pragma endregion
 };

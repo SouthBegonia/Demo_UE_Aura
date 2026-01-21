@@ -173,10 +173,20 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 		// Damage React
 		if (!bFatal)
 		{
-			FGameplayTagContainer TagContainer;
-			TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
-			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
+			if (CombatInterface && ICombatInterface::Execute_IsBeingShocked(Props.TargetAvatarActor))
+			{
+				// Montage - Shock
+			}
+			else
+			{
+				// Montage - HitReact
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
 
+			// Knockback
 			const FVector& KnockbackForce = UAuraAbilitySystemLibrary::GetKnockbackForce(Props.EffectContextHandle);
 			if (!KnockbackForce.IsNearlyZero(1.f))
 			{

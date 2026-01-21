@@ -51,6 +51,10 @@ public:
 	UFUNCTION()
 	virtual void OnRep_Stunned();
 
+	/* Is character under Lighting Attack, then will play special HitReact Montage */
+	UPROPERTY(Replicated, BlueprintReadOnly, Category="Aura|Combat")
+	bool bIsBeingShocked = false;
+
 	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
 protected:
@@ -77,6 +81,8 @@ protected:
 	virtual UNiagaraSystem* GetBloodEffect_Implementation() override;
 	virtual FTaggedMontage GetTaggedMontageByTag_Implementation(const FGameplayTag& MontageTag) override;
 	virtual ECharacterClass GetCharacterClass_Implementation() override;
+	virtual bool IsBeingShocked_Implementation() const override;
+	virtual void SetIsBeingShocked_Implementation(bool bInShock) override;
 
 	bool bDead = false;
 
