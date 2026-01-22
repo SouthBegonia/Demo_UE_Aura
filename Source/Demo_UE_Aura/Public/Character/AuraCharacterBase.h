@@ -9,6 +9,7 @@
 #include "AuraCharacterBase.generated.h"
 
 
+class UPassiveNiagaraComponent;
 class UDebuffNiagaraComponent;
 class UNiagaraSystem;
 class UGameplayAbility;
@@ -27,6 +28,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Combat")
 	float BaseWalkSpeed = 600.f;
@@ -132,6 +134,22 @@ protected:
 	virtual int32 GetMinionCount_Implementation() override;
 	virtual bool CanSummonMinion_Implementation() override;
 	virtual void IncremenetMinionCount_Implementation(const int32 Amount) override;
+
+#pragma endregion
+
+
+#pragma region Combat - PassiveAbility
+
+private:
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USceneComponent> EffectAttachComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPassiveNiagaraComponent> HaloOfProtectionNiagaraComponent;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPassiveNiagaraComponent> LifeSiphonNiagaraComponent;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPassiveNiagaraComponent> ManaSiphonNiagaraComponent;
 
 #pragma endregion
 
