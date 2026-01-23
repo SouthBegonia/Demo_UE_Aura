@@ -67,13 +67,13 @@ public:
 
 #pragma region Attributes - Vital
 
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_Health, Category="Attributes|Vital")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category="Attributes|Vital")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Health);
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
 
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_Mana, Category="Attributes|Vital")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Mana, Category="Attributes|Vital")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Mana);
 	UFUNCTION()
@@ -84,28 +84,28 @@ public:
 #pragma region Attributes - Primary
 
 	/* Strength : Increases physical damage */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_Strength, Category="Attributes|Primary")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Strength, Category="Attributes|Primary")
 	FGameplayAttributeData Strength;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Strength);
 	UFUNCTION()
 	void OnRep_Strength(const FGameplayAttributeData& OldStrength) const;
 
 	/* Intelligence : Increases magical damage */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_Intelligence, Category="Attributes|Primary")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Intelligence, Category="Attributes|Primary")
 	FGameplayAttributeData Intelligence;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Intelligence);
 	UFUNCTION()
 	void OnRep_Intelligence(const FGameplayAttributeData& OldIntelligence) const;
 
 	/* Resilience : Increases armor and armor penetration */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_Resilience, Category="Attributes|Primary")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Resilience, Category="Attributes|Primary")
 	FGameplayAttributeData Resilience;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Resilience);
 	UFUNCTION()
 	void OnRep_Resilience(const FGameplayAttributeData& OldResilience) const;
 
 	/* Vigor : Increases Health */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_Vigor, Category="Attributes|Primary")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Vigor, Category="Attributes|Primary")
 	FGameplayAttributeData Vigor;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Vigor);
 	UFUNCTION()
@@ -119,7 +119,7 @@ public:
 	 * Armor : Reduces damage taken, improves @BlockChance
 	 *  - depends on @Resilience
 	 */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_Armor, Category="Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Armor, Category="Attributes|Secondary")
 	FGameplayAttributeData Armor;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Armor);
 	UFUNCTION()
@@ -129,7 +129,7 @@ public:
 	 * ArmorPenetration : Ignores percentage of enemy @Armor, increases @CriticalHitChance
 	 *  - depends on @Resilience
 	 */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_ArmorPenetration, Category="Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ArmorPenetration, Category="Attributes|Secondary")
 	FGameplayAttributeData ArmorPenetration;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, ArmorPenetration);
 	UFUNCTION()
@@ -139,7 +139,7 @@ public:
 	 * BlockChance : Chance to cut incoming damage in half
 	 *  - depends on @Armor
 	 */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_BlockChance, Category="Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_BlockChance, Category="Attributes|Secondary")
 	FGameplayAttributeData BlockChance;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, BlockChance);
 	UFUNCTION()
@@ -149,7 +149,7 @@ public:
 	 * CriticalHitChance : Chance to double damage plus Critical Hit bonus
 	 *  - depends on @ArmorPenetration
 	 */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_CriticalHitChance, Category="Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CriticalHitChance, Category="Attributes|Secondary")
 	FGameplayAttributeData CriticalHitChance;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, CriticalHitChance);
 	UFUNCTION()
@@ -159,7 +159,7 @@ public:
 	 * CriticalHitDamage : Bonus damage added when a Critical Hit is scored
 	 *  - depends on @ArmorPenetration
 	 */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_CriticalHitDamage, Category="Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CriticalHitDamage, Category="Attributes|Secondary")
 	FGameplayAttributeData CriticalHitDamage;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, CriticalHitDamage);
 	UFUNCTION()
@@ -169,7 +169,7 @@ public:
 	 * CriticalHitResistance : Reduces @CriticalHitDamage of attacking enemies
 	 *  - depends on @Armor
 	 */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_CriticalHitResistance, Category="Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_CriticalHitResistance, Category="Attributes|Secondary")
 	FGameplayAttributeData CriticalHitResistance;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, CriticalHitResistance);
 	UFUNCTION()
@@ -179,7 +179,7 @@ public:
 	 * HealthRegeneration : Amount of @Health regenerated every 1 second
 	 *  - depends on @Vigor
 	 */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_HealthRegeneration, Category="Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_HealthRegeneration, Category="Attributes|Secondary")
 	FGameplayAttributeData HealthRegeneration;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, HealthRegeneration);
 	UFUNCTION()
@@ -189,7 +189,7 @@ public:
 	 * ManaRegeneration : Amount of @Mana regenerated every 1 second
 	 *  - depends on @Intelligence
 	 */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_ManaRegeneration, Category="Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ManaRegeneration, Category="Attributes|Secondary")
 	FGameplayAttributeData ManaRegeneration;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, ManaRegeneration);
 	UFUNCTION()
@@ -199,7 +199,7 @@ public:
 	 * MaxHealth
 	 *  - depends on @Vigor
 	 */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_MaxHealth, Category="Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxHealth, Category="Attributes|Secondary")
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, MaxHealth);
 	UFUNCTION()
@@ -209,7 +209,7 @@ public:
 	 * MaxMana
 	 *  - depends on @Intelligence
 	 */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_MaxMana, Category="Attributes|Secondary")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_MaxMana, Category="Attributes|Secondary")
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, MaxMana);
 	UFUNCTION()
@@ -223,7 +223,7 @@ public:
 	 * FireResistance : Reduces the damage of target type
 	 *  - depends on 
 	 */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_FireResistance, Category="Attributes|Resistance")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_FireResistance, Category="Attributes|Resistance")
 	FGameplayAttributeData FireResistance;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, FireResistance);
 	UFUNCTION()
@@ -233,7 +233,7 @@ public:
 	 * LightingResistance : Reduces the damage of target type
 	 *  - depends on 
 	 */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_LightingResistance, Category="Attributes|Resistance")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_LightingResistance, Category="Attributes|Resistance")
 	FGameplayAttributeData LightingResistance;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, LightingResistance);
 	UFUNCTION()
@@ -243,7 +243,7 @@ public:
 	 * ArcaneResistance : Reduces the damage of target type
 	 *  - depends on 
 	 */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_ArcaneResistance, Category="Attributes|Resistance")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_ArcaneResistance, Category="Attributes|Resistance")
 	FGameplayAttributeData ArcaneResistance;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, ArcaneResistance);
 	UFUNCTION()
@@ -253,7 +253,7 @@ public:
 	 * PhysicalResistance : Reduces the damage of target type
 	 *  - depends on 
 	 */
-	UPROPERTY(BlueprintReadOnly, Replicated = OnRep_PhysicalResistance, Category="Attributes|Resistance")
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_PhysicalResistance, Category="Attributes|Resistance")
 	FGameplayAttributeData PhysicalResistance;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, PhysicalResistance);
 	UFUNCTION()
@@ -263,7 +263,7 @@ public:
 
 #pragma region Attributes - Meta
 
-	UPROPERTY(BlueprintReadOnly, /*Replicated = OnRep_Health,*/ Category="Attributes|Meta")	//do not Replicate, only process on Server
+	UPROPERTY(BlueprintReadOnly, /*ReplicatedUsing = OnRep_Health,*/ Category="Attributes|Meta")	//do not Replicate, only process on Server
 	FGameplayAttributeData IncomingDamage;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, IncomingDamage);
 
