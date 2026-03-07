@@ -179,6 +179,24 @@ int32 AAuraCharacter::GetSpellPointsReward_Implementation(int32 InLevel) const
 	return 0;
 }
 
+void AAuraCharacter::ShowMagicCircle_Implementation(UMaterialInterface* DecalMaterial) const
+{
+	AAuraPlayerController* AuraPlayerController = Cast<AAuraPlayerController>(GetController());
+	if (AuraPlayerController)
+	{
+		AuraPlayerController->ShowMagicCircle(DecalMaterial);
+	}
+}
+
+void AAuraCharacter::HideMagicCircle_Implementation() const
+{
+	AAuraPlayerController* AuraPlayerController = Cast<AAuraPlayerController>(GetController());
+	if (AuraPlayerController)
+	{
+		AuraPlayerController->HideMagicCircle();
+	}
+}
+
 // Execute On Server
 void AAuraCharacter::LevelUp_Implementation()
 {

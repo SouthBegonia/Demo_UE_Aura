@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
 
+class AMagicCircle;
 class UNiagaraSystem;
 class UDamageTextComponent;
 class USplineComponent;
@@ -117,9 +118,21 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter, bool bIsBlockedHit, bool bIsCriticalHit);
 
+	UFUNCTION(BlueprintCallable)
+	void ShowMagicCircle(UMaterialInterface* DecalMaterial = nullptr);
+	UFUNCTION(BlueprintCallable)
+	void HideMagicCircle();
+	void UpdateMagicCircleLocation();
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category="Aura|Combat")
 	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
+
+
+	UPROPERTY(EditDefaultsOnly, Category="Aura|Combat")
+	TSubclassOf<AMagicCircle> MagicCircleClass;
+	UPROPERTY()
+	TObjectPtr<AMagicCircle> MagicCircle;
 
 #pragma endregion
 };

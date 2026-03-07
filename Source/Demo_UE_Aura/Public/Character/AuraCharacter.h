@@ -51,6 +51,9 @@ public:
 	virtual int32 GetAttributePointsReward_Implementation(int32 InLevel) const override;
 	virtual int32 GetSpellPointsReward_Implementation(int32 InLevel) const override;
 
+	virtual void ShowMagicCircle_Implementation(UMaterialInterface* DecalMaterial = nullptr) const override;
+	virtual void HideMagicCircle_Implementation() const override;
+
 private:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastLevelUpParticles() const;
