@@ -14,6 +14,7 @@
 #include "Actor/MagicCircle.h"
 #include "Components/DecalComponent.h"
 #include "Components/SplineComponent.h"
+#include "Demo_UE_Aura/Demo_UE_Aura.h"
 #include "GameFramework/Character.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
@@ -62,7 +63,9 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 
 void AAuraPlayerController::CursorHitOnTick()
 {
-	GetHitResultUnderCursor(ECC_Visibility, false, CursorHitResultOnTick);
+	const ECollisionChannel TraceChannel = IsValid(MagicCircle) ? ECC_EXCLUDE_PLAYER : ECC_Visibility;
+
+	GetHitResultUnderCursor(TraceChannel, false, CursorHitResultOnTick);
 }
 
 void AAuraPlayerController::CursorTrace()

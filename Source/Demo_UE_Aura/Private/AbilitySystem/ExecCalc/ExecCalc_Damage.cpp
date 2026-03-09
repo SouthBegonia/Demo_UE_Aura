@@ -281,7 +281,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 			{
 				FDelegateHandle handle = TargetCombatInterface->GetOnDamageDelegate().AddLambda([&](float DamageAmount)
 				{
-					GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Black, FString::Printf(TEXT("DamageTypeValue = %f, DamageAmount = %f"), Pair.Value, DamageAmount));
+					//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Black, FString::Printf(TEXT("DamageTypeValue = %f, DamageAmount = %f"), Pair.Value, DamageAmount));
 					Pair.Value = DamageAmount;
 
 					if (handle.IsValid())
