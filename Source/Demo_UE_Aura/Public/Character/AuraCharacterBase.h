@@ -25,6 +25,7 @@ class DEMO_UE_AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySy
 public:
 	AAuraCharacterBase();
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -166,6 +167,10 @@ public:
 	virtual FOnDeathSignature& GetOnDeathDelegate() override;
 
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+
+
+	FOnDamageSignature OnDamageDelegate;
+	virtual FOnDamageSignature& GetOnDamageDelegate() override;
 
 protected:
 	UPROPERTY()

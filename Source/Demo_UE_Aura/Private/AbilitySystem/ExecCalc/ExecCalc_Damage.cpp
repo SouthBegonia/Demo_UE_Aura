@@ -10,6 +10,7 @@
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Interaction/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 
 struct AuraDamageStatics
 {
@@ -263,15 +264,56 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 #pragma region Core Calculation
 
-	// Damage Resistance : Reduce the same type damage by Resistance
+	// Radial Damage : If was Radial Damage, reduce damage in phases
+	// NOTE : this will modify DamageMap(which record the original DamageValue from SetByCallerMagnitude)
 	for (TPair<FGameplayTag, float>& Pair : DamageMap)
+	{
+		float DamageTypeValueOriginal = Pair.Value;
+
+		if (DamageTypeValueOriginal > 0.f && UAuraAbilitySystemLibrary::IsRadialDamage(EffectContextHandle))
+		{
+			// 1. Override TakeDamage in AuraCharacterBase
+			// 2. Create delegate OnDamageDelegate, broadcast damage received in TakeDamage
+			// 3. Bind lambda to OnDamageDelegate on the Victim here
+			// 4. Call UGameplayStatics::ApplyRadialDamageWithFalloff to cause damage(this will result in TakeDamage being called on the Victim, which will then broadcast OnDamageDelegate)
+			// 5. In Lambda, set DamageTypeValue to the damage received from the broadcast
+			if (TargetCombatInterface)
+			{
+				FDelegateHandle handle = TargetCombatInterface->GetOnDamageDelegate().AddLambda([&](float DamageAmount)
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Black, FString::Printf(TEXT("DamageTypeValue = %f, DamageAmount = %f"), Pair.Value, DamageAmount));
+					Pair.Value = DamageAmount;
+
+					if (handle.IsValid())
+						TargetCombatInterface->GetOnDamageDelegate().Remove(handle);	// TODO : Find a better way to unbind event.
+				});
+			}
+			UGameplayStatics::ApplyRadialDamageWithFalloff(
+				TargetAvatarActor,
+				DamageTypeValueOriginal,
+				0.f,
+				UAuraAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
+				UAuraAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle),
+				UAuraAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
+				1.f,
+				UDamageType::StaticClass(),
+				TArray<AActor*>(),
+				SourceAvatarActor,
+				nullptr
+			);
+		}
+	}
+
+
+	// Damage Resistance : Reduce the same type damage by Resistance
+	for (const TPair<FGameplayTag, float>& Pair : DamageMap)
 	{
 		const float DamageTypeValueOriginal = Pair.Value;
 		const FGameplayTag DamageTypeTag = Pair.Key;
 		const FGameplayTag DamageTypeResistanceAttributeTag = FAuraGameplayTags::Get().DamageTypesToResistancesMap[DamageTypeTag];
 
 		const float DamageTypeResistanceValue = TargetDamageResistanceMap[DamageTypeResistanceAttributeTag];
-		const float DamageTypeValue = DamageTypeValueOriginal * ((100.f - DamageTypeResistanceValue) / 100.f);	// Effective Damage value of this type
+		float DamageTypeValue = DamageTypeValueOriginal * ((100.f - DamageTypeResistanceValue) / 100.f);	// Effective Damage value of this type
 
 		Damage += DamageTypeValue;
 	}

@@ -27,7 +27,7 @@ public:
 	float GetDamageAtLevel() const;
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Aura|Damage")
-	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const;
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr, FVector InRadialDamageOrigin = FVector::ZeroVector) const;
 
 protected:
 	FORCEINLINE TSubclassOf<UGameplayEffect> GetDamageEffectClass() const { return DamageEffectClass; }
@@ -58,6 +58,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category="Aura|Damage|DamageEffectParams")
 	float KnockbackChance = 0.f;
 
+
+	UPROPERTY(EditDefaultsOnly, Category="Aura|Damage")
+	bool bIsRadialDamage = false;
+	UPROPERTY(EditDefaultsOnly, Category="Aura|Damage", BlueprintReadOnly, meta=(EditCondition="bIsRadialDamage", EditConditionHides, AllowPrivateAccess = "true"))
+	float RadialDamageInnerRadius = 0.f;
+	UPROPERTY(EditDefaultsOnly, Category="Aura|Damage", BlueprintReadOnly, meta=(EditCondition="bIsRadialDamage", EditConditionHides, AllowPrivateAccess = "true"))
+	float RadialDamageOuterRadius = 0.f;
 
 #pragma region Debuff
 
