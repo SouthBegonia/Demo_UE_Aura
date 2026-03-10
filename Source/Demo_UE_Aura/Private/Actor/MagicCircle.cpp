@@ -9,8 +9,10 @@ AMagicCircle::AMagicCircle()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+
 	MagicCircleDecalComp = CreateDefaultSubobject<UDecalComponent>("MagicCircleDecalComp");
-	MagicCircleDecalComp->SetupAttachment(GetRootComponent());
+	SetRootComponent(MagicCircleDecalComp);
+	//MagicCircleDecalComp->SetupAttachment(GetRootComponent());
 }
 
 void AMagicCircle::BeginPlay()
