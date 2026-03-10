@@ -283,24 +283,25 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 				{
 					//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Black, FString::Printf(TEXT("DamageTypeValue = %f, DamageAmount = %f"), Pair.Value, DamageAmount));
 					Pair.Value = DamageAmount;
-
-					if (handle.IsValid())
-						TargetCombatInterface->GetOnDamageDelegate().Remove(handle);	// TODO : Find a better way to unbind event.
 				});
+
+				UGameplayStatics::ApplyRadialDamageWithFalloff(
+					TargetAvatarActor,
+					DamageTypeValueOriginal,
+					0.f,
+					UAuraAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
+					UAuraAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle),
+					UAuraAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
+					1.f,
+					UDamageType::StaticClass(),
+					TArray<AActor*>(),
+					SourceAvatarActor,
+					nullptr
+				);
+
+				// TODO : Find a better way to unbind event.
+				TargetCombatInterface->GetOnDamageDelegate().Remove(handle);
 			}
-			UGameplayStatics::ApplyRadialDamageWithFalloff(
-				TargetAvatarActor,
-				DamageTypeValueOriginal,
-				0.f,
-				UAuraAbilitySystemLibrary::GetRadialDamageOrigin(EffectContextHandle),
-				UAuraAbilitySystemLibrary::GetRadialDamageInnerRadius(EffectContextHandle),
-				UAuraAbilitySystemLibrary::GetRadialDamageOuterRadius(EffectContextHandle),
-				1.f,
-				UDamageType::StaticClass(),
-				TArray<AActor*>(),
-				SourceAvatarActor,
-				nullptr
-			);
 		}
 	}
 
