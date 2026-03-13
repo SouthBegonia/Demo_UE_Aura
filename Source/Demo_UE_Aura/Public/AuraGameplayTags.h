@@ -143,6 +143,13 @@ public:
 #pragma endregion
 
 
+#pragma region GameplayCue
+
+	FGameplayTag GameplayCue_FireBlast;
+
+#pragma endregion
+
+
 #pragma region Cooldown
 
 	FGameplayTag Cooldown_Fire_FireBolt;

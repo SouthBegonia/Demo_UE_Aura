@@ -121,6 +121,13 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 #pragma endregion
 
 
+#pragma region GameplayCue
+
+	GameplayTags.GameplayCue_FireBlast = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("GameplayCue.FireBlast"), FString("GameplayCue_FireBlast"));
+
+#pragma endregion
+
+
 #pragma region Cooldown
 
 	GameplayTags.Cooldown_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Cooldown.Fire.FireBolt"), FString("Cooldown_Fire_FireBolt"));
