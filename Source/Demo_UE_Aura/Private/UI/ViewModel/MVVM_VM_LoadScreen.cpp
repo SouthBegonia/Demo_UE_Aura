@@ -95,6 +95,11 @@ void UMVVM_VM_LoadScreen::SlotButtonPressed_SelectSlot(int32 SlotIndex)
 	SetSlotSelection(SlotIndex);
 }
 
+void UMVVM_VM_LoadScreen::SlotButtonPressed_Play(const TSoftObjectPtr<UWorld> Level)
+{
+	UGameplayStatics::OpenLevelBySoftObjectPtr(this, Level);
+}
+
 void UMVVM_VM_LoadScreen::SlotButtonPressed_DeleteSlot()
 {
 	if (CurrentSelectLoadSlot.IsValid())

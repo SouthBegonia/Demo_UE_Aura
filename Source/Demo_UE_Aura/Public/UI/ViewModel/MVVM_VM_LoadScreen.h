@@ -40,6 +40,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SlotButtonPressed_SelectSlot(int32 SlotIndex);
 	UFUNCTION(BlueprintCallable)
+	void SlotButtonPressed_Play(const TSoftObjectPtr<UWorld> Level);
+	UFUNCTION(BlueprintCallable)
 	void SlotButtonPressed_DeleteSlot();
 
 	/* Load Data from SaveGame to initialize VM */

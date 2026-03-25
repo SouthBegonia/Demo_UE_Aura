@@ -27,6 +27,7 @@ void ALoadScreenHUD::BeginPlay()
 	// Set InputMode
 	FInputModeUIOnly InputModeData;
 	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	InputModeData.SetWidgetToFocus(LoadScreenWidget->TakeWidget());
 	GetOwningPlayerController()->SetInputMode(InputModeData);
 	GetOwningPlayerController()->SetShowMouseCursor(true);
 }
