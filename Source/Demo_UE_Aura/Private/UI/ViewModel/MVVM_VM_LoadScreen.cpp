@@ -71,14 +71,21 @@ void UMVVM_VM_LoadScreen::SlotButtonPressed_NewSlot(int32 SlotIndex, const FStri
 	if (AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
 	{
 		UMVVM_VM_LoadSlot* LoadSlotVM = GetLoadSlotViewModel(SlotIndex);
-		LoadSlotVM->SetPlayerName(EnterName);
+		UMVVM_VM_LoadSlot* LoadSlotVM_Temp = DuplicateObject(LoadSlotVM, this);
+
+		// set base info
+		//		use LoadSlotVM_Temp info was just for create/initialize SaveGameData
+		LoadSlotVM_Temp->SetPlayerName(EnterName);
+		LoadSlotVM_Temp->SetPlayerLevel(1);
+		LoadSlotVM_Temp->SetMapName(AuraGameMode->GetDefaultMapName());
 
 		// Save Data
-		if (AuraGameMode->SaveTargetSlotData(*LoadSlotVM, SlotIndex))
+		if (AuraGameMode->SaveTargetSlotData(*LoadSlotVM_Temp, SlotIndex))
 		{
 			// Load SaveData (to update VM and UI)
 			LoadTargetSlotData(SlotIndex);
 		}
+		LoadSlotVM_Temp = nullptr;
 	}
 }
 
@@ -95,9 +102,18 @@ void UMVVM_VM_LoadScreen::SlotButtonPressed_SelectSlot(int32 SlotIndex)
 	SetSlotSelection(SlotIndex);
 }
 
-void UMVVM_VM_LoadScreen::SlotButtonPressed_Play(const TSoftObjectPtr<UWorld> Level)
+void UMVVM_VM_LoadScreen::SlotButtonPressed_Play()
 {
-	UGameplayStatics::OpenLevelBySoftObjectPtr(this, Level);
+	if (CurrentSelectLoadSlot.IsValid())
+	{
+		check(CurrentSelectSlotIndex != -1)
+
+		if (AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
+		{
+			const UMVVM_VM_LoadSlot* CurrentLoadSlot = CurrentSelectLoadSlot.Get();
+			AuraGameMode->TravelToMap(CurrentLoadSlot->GetMapName());
+		}
+	}
 }
 
 void UMVVM_VM_LoadScreen::SlotButtonPressed_DeleteSlot()

@@ -25,6 +25,11 @@ class DEMO_UE_AURA_API ULoadScreenSaveGame : public USaveGame
 public:
 	UPROPERTY()
 	FString PlayerName = FString("Default Name");
+	UPROPERTY()
+	int32 PlayerLevel = 1;
+
+	UPROPERTY()
+	FString MapName = FString("Default Map Name");
 
 	UPROPERTY()
 	TEnumAsByte<ESaveSlotStatus> SaveSlotStatus = ESaveSlotStatus::Vacant;

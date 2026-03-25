@@ -40,7 +40,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SlotButtonPressed_SelectSlot(int32 SlotIndex);
 	UFUNCTION(BlueprintCallable)
-	void SlotButtonPressed_Play(const TSoftObjectPtr<UWorld> Level);
+	void SlotButtonPressed_Play();
 	UFUNCTION(BlueprintCallable)
 	void SlotButtonPressed_DeleteSlot();
 

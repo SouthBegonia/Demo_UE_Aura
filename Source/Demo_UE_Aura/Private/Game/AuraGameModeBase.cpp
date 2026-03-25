@@ -7,6 +7,18 @@
 #include "Kismet/GameplayStatics.h"
 #include "UI/ViewModel/MVVM_VM_LoadSlot.h"
 
+void AAuraGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	InitMapsInfo();
+}
+
+void AAuraGameModeBase::TravelToMap(const FString& MapName)
+{
+	UGameplayStatics::OpenLevelBySoftObjectPtr(this, AllMaps.FindChecked(MapName));
+}
+
 #pragma region SaveGame
 
 bool AAuraGameModeBase::SaveTargetSlotData(const UMVVM_VM_LoadSlot& LoadSlot, int32 SlotIndex) const
@@ -62,10 +74,32 @@ ULoadScreenSaveGame* AAuraGameModeBase::CreateSlotSaveObject(const UMVVM_VM_Load
 
 	if (LoadSlot != nullptr)
 	{
+		// here to set SaveData param
 		LoadScreenSaveGame->PlayerName = LoadSlot->GetPlayerName();
+		LoadScreenSaveGame->PlayerLevel = LoadSlot->GetPlayerLevel();
+		LoadScreenSaveGame->MapName = LoadSlot->GetMapName();
 	}
 
 	return LoadScreenSaveGame;
+}
+
+
+void AAuraGameModeBase::InitMapsInfo()
+{
+	check(!DefaultMapName.IsEmpty() && !DefaultMap.IsNull())
+
+	AllMaps.Add(DefaultMapName, DefaultMap);
+}
+
+TSoftObjectPtr<UWorld> AAuraGameModeBase::GetMapByName(const FString& InMapName) const
+{
+	TSoftObjectPtr<UWorld> TargetMap = nullptr;
+	if (AllMaps.Contains(InMapName))
+		TargetMap = AllMaps[InMapName];
+	else
+		UE_LOGFMT(LogTemp, Error, "[{FUNC}] : MapName = [{MapName}] is invalid. ", __FUNCTION__, InMapName);
+
+	return TargetMap;
 }
 
 #pragma endregion

@@ -51,6 +51,8 @@ public:
 	void SetPlayerLevel(const int32 InPlayerLevel);
 	int32 GetPlayerLevel() const { return PlayerLevel; }
 
+	void SetMapName(const FString& InMapName);
+	FString GetMapName() const { return MapName; }
 
 	void SetLoadSlotName(const FString& InName);
 	FString GetLoadSlotName() const { return LoadSlotName; }
@@ -64,7 +66,8 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta=(AllowPrivateAccess="true"))
 	int32 PlayerLevel;
 
-	// TODO : add Player Level, MapName
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta=(AllowPrivateAccess="true"))
+	FString MapName;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, FieldNotify, Setter, Getter, meta=(AllowPrivateAccess="true"))

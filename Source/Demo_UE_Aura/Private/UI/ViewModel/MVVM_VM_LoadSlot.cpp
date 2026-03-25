@@ -27,6 +27,8 @@ void UMVVM_VM_LoadSlot::SetSlotStatus(ESaveSlotStatus NewStatus, bool bNotifyCha
 void UMVVM_VM_LoadSlot::UpdateLoadSlotBySaveData(const ULoadScreenSaveGame& SaveGame)
 {
 	SetPlayerName(SaveGame.PlayerName);
+	SetPlayerLevel(SaveGame.PlayerLevel);
+	SetMapName(SaveGame.MapName);
 
 	SetSlotStatus(SaveGame.SaveSlotStatus, true);;
 }
@@ -46,6 +48,11 @@ void UMVVM_VM_LoadSlot::SetPlayerName(const FString& InPlayerName)
 void UMVVM_VM_LoadSlot::SetPlayerLevel(const int32 InPlayerLevel)
 {
 	UE_MVVM_SET_PROPERTY_VALUE(PlayerLevel, InPlayerLevel);
+}
+
+void UMVVM_VM_LoadSlot::SetMapName(const FString& InMapName)
+{
+	UE_MVVM_SET_PROPERTY_VALUE(MapName, InMapName);
 }
 
 void UMVVM_VM_LoadSlot::SetLoadSlotName(const FString& InName)
