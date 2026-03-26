@@ -3,7 +3,7 @@
 
 #include "UI/ViewModel/MVVM_VM_LoadSlot.h"
 
-#include "Game/AuraGameInstance.h"
+#include "AuraLogChannels.h"
 #include "Game/AuraGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -35,6 +35,8 @@ FName UMVVM_VM_LoadSlot::GetPlayerStartTag() const
 
 	const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
 	check(AuraGameMode)
+
+	UE_LOGFMT(LogAura, Warning, "[{FUNC}] : PlayerStartTag from LoadSlot is empty, now will using GetDefaultPlayerStartTag={tag}", __FUNCTION__, AuraGameMode->GetDefaultPlayerStartTag().ToString());
 
 	return AuraGameMode->GetDefaultPlayerStartTag();
 }

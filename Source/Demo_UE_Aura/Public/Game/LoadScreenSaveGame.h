@@ -14,6 +14,20 @@ enum ESaveSlotStatus : uint8
 	Taken = 2,
 };
 
+/*
+ * FSaveGameModifiableParams
+ * - using for InGame, not LoadMenu
+ */
+USTRUCT()
+struct FSaveGameModifiableParams
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY()
+	FName PlayerStartTag;
+};
+
 /**
  * 
  */

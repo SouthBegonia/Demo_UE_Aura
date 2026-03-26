@@ -52,7 +52,7 @@ AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 	return nullptr;
 }
 
-#pragma region SaveGame
+#pragma region SaveGame ((For LoadMenu)
 
 bool AAuraGameModeBase::SaveTargetSlotData(const UMVVM_VM_LoadSlot& LoadSlot, int32 SlotIndex) const
 {
@@ -86,14 +86,15 @@ bool AAuraGameModeBase::DeleteTargetSlotData(const UMVVM_VM_LoadSlot& LoadSlot, 
 	return bDeleteSuccess;
 }
 
-ULoadScreenSaveGame* AAuraGameModeBase::GetTargetSaveSlotData(const FString& SlotName, int32 SlotIndex) const
+ULoadScreenSaveGame* AAuraGameModeBase::GetTargetSaveSlotData(const FString& SlotName, int32 SlotIndex, const bool bCreateWhenNull) const
 {
 	USaveGame* SaveGameObject = nullptr;
 
 	// Try LoadSaveData or Create a new one
 	if (UGameplayStatics::DoesSaveGameExist(SlotName, SlotIndex))
 		SaveGameObject = UGameplayStatics::LoadGameFromSlot(SlotName, SlotIndex);
-	else
+
+	if (SaveGameObject == nullptr && bCreateWhenNull)
 		SaveGameObject = CreateSlotSaveObject(nullptr);
 
 	return Cast<ULoadScreenSaveGame>(SaveGameObject);
@@ -135,5 +136,52 @@ TSoftObjectPtr<UWorld> AAuraGameModeBase::GetMapByName(const FString& InMapName)
 
 	return TargetMap;
 }
+
+#pragma endregion
+
+#pragma region SaveGame (For InGame)
+
+ULoadScreenSaveGame* AAuraGameModeBase::RetrieveInGameSaveData()
+{
+	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(GetGameInstance());
+
+	const FString InGameLoadSlotName = AuraGameInstance->LoadSlotName;
+	const int32 InGameLoadSlotIndex = AuraGameInstance->LoadSlotIndex;
+
+	ULoadScreenSaveGame* InGameSaveSlotData = GetTargetSaveSlotData(InGameLoadSlotName, InGameLoadSlotIndex, false);
+	if (InGameSaveSlotData == nullptr)
+	{
+		UE_LOGFMT(LogAura, Error, "[{FUNC}] : Can't get SlotData. InGameLoadSlotName={Name}, InGameLoadSlotIndex={Index}", __FUNCTION__, InGameLoadSlotName, InGameLoadSlotIndex);
+		// this shouldn't happen, there are possible situations:
+		//		- Delete the SaveData when playing
+	}
+
+	return InGameSaveSlotData;
+}
+
+bool AAuraGameModeBase::ModifyInGameSaveData(ULoadScreenSaveGame& SaveData, FSaveGameModifiableParams& ModifyParams)
+{
+	SaveData.PlayerStartTag = ModifyParams.PlayerStartTag;
+
+	return true;
+}
+
+bool AAuraGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame& SaveData, const FString& SlotName, int32 SlotIndex)
+{
+	if (!UGameplayStatics::DoesSaveGameExist(SlotName, SlotIndex))
+	{
+		UE_LOGFMT(LogAura, Error, "[{FUNC}] : Can't get SlotData. SlotName={Name}, SlotIndex={Index}", __FUNCTION__, SlotName, SlotIndex);
+		// this shouldn't happen, there are possible situations:
+		//		- Delete the SaveData when playing
+	}
+
+	// Save data to local
+	const bool bSaveSuccess = UGameplayStatics::SaveGameToSlot(&SaveData, SlotName, SlotIndex);
+	if (!bSaveSuccess)
+		UE_LOGFMT(LogTemp, Error, "[{FUNC}] : SaveGameToSlot failed: SlotName={SlotName}, SlotIndex={SlotIndex}", __FUNCTION__, SlotName, SlotIndex);
+
+	return bSaveSuccess;
+}
+
 
 #pragma endregion

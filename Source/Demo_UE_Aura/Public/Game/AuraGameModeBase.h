@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "LoadScreenSaveGame.h"
 #include "GameFramework/GameModeBase.h"
 #include "AuraGameModeBase.generated.h"
 
@@ -34,11 +35,11 @@ public:
 
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
-#pragma region SaveGame
+#pragma region SaveGame (For LoadMenu)
 
 public:
 	bool SaveTargetSlotData(const UMVVM_VM_LoadSlot& LoadSlot, int32 SlotIndex) const;
-	ULoadScreenSaveGame* GetTargetSaveSlotData(const FString& SlotName, int32 SlotIndex) const;
+	ULoadScreenSaveGame* GetTargetSaveSlotData(const FString& SlotName, int32 SlotIndex, bool bCreateWhenNull) const;
 	bool DeleteTargetSlotData(const UMVVM_VM_LoadSlot& LoadSlot, int32 SlotIndex) const;
 
 	UPROPERTY(EditDefaultsOnly, Category="Aura|SaveGame")
@@ -69,6 +70,17 @@ protected:
 
 private:
 	void InitMapsInfo();
+
+#pragma endregion
+
+#pragma region SaveGame (For InGame)
+
+public:
+	ULoadScreenSaveGame* RetrieveInGameSaveData();
+
+	bool ModifyInGameSaveData(ULoadScreenSaveGame& SaveData, FSaveGameModifiableParams& ModifyParams);
+
+	bool SaveInGameProgressData(ULoadScreenSaveGame& SaveData, const FString& SlotName, int32 SlotIndex);
 
 #pragma endregion
 };

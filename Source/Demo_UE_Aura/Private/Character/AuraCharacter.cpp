@@ -13,7 +13,11 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Game/AuraGameInstance.h"
+#include "Game/AuraGameModeBase.h"
+#include "Game/LoadScreenSaveGame.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Player/AuraPlayerController.h"
 #include "Player/AuraPlayerState.h"
@@ -198,6 +202,33 @@ void AAuraCharacter::HideMagicCircle_Implementation() const
 		AuraPlayerController->HideMagicCircle();
 
 		AuraPlayerController->bShowMouseCursor = true;
+	}
+}
+
+void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
+{
+	bool SaveSuccessful = false;
+
+	if (AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
+	{
+		UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(GetGameInstance());
+		if (ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData())
+		{
+			// Modify SaveData
+			FSaveGameModifiableParams ModifyParams;
+			ModifyParams.PlayerStartTag = CheckpointTag;
+			AuraGameMode->ModifyInGameSaveData(*SaveData, ModifyParams);
+
+			// Save SaveData
+			const FString SlotName = AuraGameInstance->LoadSlotName;
+			const int32 SlotIndex = AuraGameInstance->LoadSlotIndex;
+			SaveSuccessful = AuraGameMode->SaveInGameProgressData(*SaveData, SlotName, SlotIndex);
+
+			// Update InGame Data
+			//	- Not necessary to set PlayerStartTag, because it will be set when next UMVVM_VM_LoadScreen::SlotButtonPressed_Play (data will be loaded from local).
+			//		anyway, just set it for other possible uses (ex: Recording last PlayerStartTag)
+			AuraGameInstance->PlayerStartTag = CheckpointTag;
+		}
 	}
 }
 

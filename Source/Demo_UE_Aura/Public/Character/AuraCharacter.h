@@ -54,6 +54,8 @@ public:
 	virtual void ShowMagicCircle_Implementation(UMaterialInterface* DecalMaterial = nullptr) const override;
 	virtual void HideMagicCircle_Implementation() const override;
 
+	virtual void SaveProgress_Implementation(const FName& CheckpointTag) override;
+
 private:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastLevelUpParticles() const;
