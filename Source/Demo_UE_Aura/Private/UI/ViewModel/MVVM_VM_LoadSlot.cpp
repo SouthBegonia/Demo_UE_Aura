@@ -3,6 +3,10 @@
 
 #include "UI/ViewModel/MVVM_VM_LoadSlot.h"
 
+#include "Game/AuraGameInstance.h"
+#include "Game/AuraGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
+
 void UMVVM_VM_LoadSlot::InitializeSlot(bool bNotify)
 {
 	// Initialize for new empty slot
@@ -24,13 +28,33 @@ void UMVVM_VM_LoadSlot::SetSlotStatus(ESaveSlotStatus NewStatus, bool bNotifyCha
 	}
 }
 
+FName UMVVM_VM_LoadSlot::GetPlayerStartTag() const
+{
+	if (!PlayerStartTag.IsNone())
+		return PlayerStartTag;
+
+	const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	check(AuraGameMode)
+
+	return AuraGameMode->GetDefaultPlayerStartTag();
+}
+
+void UMVVM_VM_LoadSlot::SetPlayerStartTag(const FName& NewTag)
+{
+	PlayerStartTag = NewTag;
+}
+
 void UMVVM_VM_LoadSlot::UpdateLoadSlotBySaveData(const ULoadScreenSaveGame& SaveGame)
 {
+	// TODO : check variable in SaveGame is valid. if variable is valid, should delete this SaveGame?
+
 	SetPlayerName(SaveGame.PlayerName);
 	SetPlayerLevel(SaveGame.PlayerLevel);
 	SetMapName(SaveGame.MapName);
 
-	SetSlotStatus(SaveGame.SaveSlotStatus, true);;
+	SetPlayerStartTag(SaveGame.PlayerStartTag);
+
+	SetSlotStatus(SaveGame.SaveSlotStatus, true);
 }
 
 void UMVVM_VM_LoadSlot::SetSelected(bool bSelected)

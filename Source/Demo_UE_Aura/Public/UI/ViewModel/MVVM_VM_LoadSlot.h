@@ -23,9 +23,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE ESaveSlotStatus GetSlotStatus() const { return SlotStatus; }
-
-
 	void SetSlotStatus(ESaveSlotStatus NewStatus, bool bNotifyChanged = false);
+
+	FName GetPlayerStartTag() const;
+	void SetPlayerStartTag(const FName& NewTag);
 
 	void UpdateLoadSlotBySaveData(const ULoadScreenSaveGame& SaveGame);
 
@@ -34,6 +35,9 @@ public:
 private:
 	UPROPERTY()
 	TEnumAsByte<ESaveSlotStatus> SlotStatus;
+
+	UPROPERTY()
+	FName PlayerStartTag;
 
 
 	UPROPERTY(BlueprintAssignable)

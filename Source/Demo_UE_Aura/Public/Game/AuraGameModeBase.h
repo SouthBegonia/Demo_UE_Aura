@@ -32,6 +32,8 @@ public:
 
 	void TravelToMap(const FString& MapName);
 
+	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+
 #pragma region SaveGame
 
 public:
@@ -48,6 +50,7 @@ private:
 
 public:
 	FString GetDefaultMapName() const { return DefaultMapName; }
+	FName GetDefaultPlayerStartTag() const { return DefaultPlayerStartTag; }
 
 	TSoftObjectPtr<UWorld> GetMapByName(const FString& InMapName) const;
 
@@ -57,6 +60,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="Aura|SaveGame")
 	TSoftObjectPtr<UWorld> DefaultMap;
+
+	UPROPERTY(EditDefaultsOnly, Category="Aura|SaveGame")
+	FName DefaultPlayerStartTag;
 
 	UPROPERTY(EditDefaultsOnly, Category="Aura|SaveGame")
 	TMap<FString, TSoftObjectPtr<UWorld>> AllMaps;

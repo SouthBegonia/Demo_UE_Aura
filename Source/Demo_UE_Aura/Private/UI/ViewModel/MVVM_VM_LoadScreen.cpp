@@ -3,6 +3,7 @@
 
 #include "UI/ViewModel/MVVM_VM_LoadScreen.h"
 
+#include "Game/AuraGameInstance.h"
 #include "Game/AuraGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/ViewModel/MVVM_VM_LoadSlot.h"
@@ -110,7 +111,16 @@ void UMVVM_VM_LoadScreen::SlotButtonPressed_Play()
 
 		if (AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
 		{
+			// Get necessary data to initialize Map/Character/... info
 			const UMVVM_VM_LoadSlot* CurrentLoadSlot = CurrentSelectLoadSlot.Get();
+
+			// set necessary info
+			UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(AuraGameMode->GetGameInstance());
+			AuraGameInstance->PlayerStartTag = CurrentLoadSlot->GetPlayerStartTag();
+			AuraGameInstance->LoadSlotName = CurrentLoadSlot->GetLoadSlotName();
+			AuraGameInstance->LoadSlotIndex = CurrentLoadSlot->GetSlotIndex();
+
+			// Travel Map
 			AuraGameMode->TravelToMap(CurrentLoadSlot->GetMapName());
 		}
 	}
