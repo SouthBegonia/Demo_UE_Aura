@@ -8,6 +8,7 @@
 #include "AuraLogChannels.h"
 #include "NiagaraComponent.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
 #include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -57,8 +58,13 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Black, FString::Printf(TEXT("Server = %hhd"), HasAuthority()));
+
+	// Init ability actor info for the Server
 	InitAbilityActorInfo();
-	AddCharacterAbilities();
+
+	LoadProgress();
+
+	InitHUD();
 }
 
 // Client Only
@@ -68,7 +74,73 @@ void AAuraCharacter::OnRep_PlayerState()
 
 	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Black, FString::Printf(TEXT("Client = %hhd"), HasAuthority()));
 
+	// Init ability actor info for the Client
 	InitAbilityActorInfo();
+
+	InitHUD();
+}
+
+void AAuraCharacter::LoadProgress()
+{
+	bool bLoadSuccessful = false;
+
+	if (AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
+	{
+		if (UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(AuraGameMode->GetGameInstance()))
+		{
+			if (ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData())
+			{
+				auto InitializeInfoFunc = [this, &SaveData](const bool bDefaultInitialize)
+				{
+					AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(GetPlayerState());
+
+					// Init PlayerInfo
+					AuraPlayerState->SetPlayerLevel(bDefaultInitialize ? 1 : SaveData->PlayerLevel);
+					AuraPlayerState->SetPlayerEXP(bDefaultInitialize ? 0 : SaveData->PlayerEXP);
+					AuraPlayerState->SetAttributePoints(bDefaultInitialize ? 0 : SaveData->AttributePoints);
+					AuraPlayerState->SetSpellPoints(bDefaultInitialize? 0 : SaveData->SpellPoints);
+
+					// Init AttributeValue
+					if (bDefaultInitialize)
+						InitializeDefaultAttributes();
+					else
+						InitializeSavedGameAttributes(*SaveData);
+
+
+					// Add CharacterAbility
+					if (bDefaultInitialize)
+						AddCharacterAbilities();
+					else
+					{
+						// TODO : add CharacterAbility and setting Level with SaveGame data
+						AddCharacterAbilities();
+					}
+
+					if (bDefaultInitialize)
+						UE_LOGFMT(LogAura, Log, "[{FUNC}] : Initialize Attributes by DefaultAttributes for first time login.", __FUNCTION__);
+					else
+						UE_LOGFMT(LogAura, Log, "[{FUNC}] : Initialize Attributes by SaveData for each time login.", __FUNCTION__);
+				};
+
+				// This means these AttributeValue had never been initialized, we have to initialize them with DefaultConfig
+				if (SaveData->bIsFirstTimeLoadIn)
+
+					InitializeInfoFunc(true);
+				else
+				{
+					// This means these AttributeValue had been initialized before, they are valid value in SaveGame, we need initialize them with value from SaveGame
+					if (!AuraGameInstance->IsInitializedPlayerInfoFromGameSave())
+						InitializeInfoFunc(false);
+				}
+
+				AuraGameInstance->MarkInitializedPlayerInfoFromGameSave();
+				bLoadSuccessful = true;
+			}
+		}
+	}
+
+	if (!bLoadSuccessful)
+		UE_LOGFMT(LogAura, Log, "[{FUNC}] : Load progress failed.", __FUNCTION__);
 }
 
 int32 AAuraCharacter::GetPlayerLevel_Implementation()
@@ -217,7 +289,7 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 			// Modify SaveData
 			FSaveGameModifiableParams ModifyParams;
 			ModifyParams.PlayerStartTag = CheckpointTag;
-			AuraGameMode->ModifyInGameSaveData(*SaveData, ModifyParams);
+			AuraGameMode->ModifyInGameSaveData(*SaveData, ModifyParams, GetPlayerState());
 
 			// Save SaveData
 			const FString SlotName = AuraGameInstance->LoadSlotName;
@@ -289,11 +361,6 @@ void AAuraCharacter::InitAbilityActorInfo()
 
 	OnAscRegisteredDelegate.Broadcast(AbilitySystemComponent);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FAuraGameplayTags::Get().Debuff_Type_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &AAuraCharacter::StunTagChanged);
-
-	InitHUD();
-
-	// initial Attributes by GE
-	InitializeDefaultAttributes();
 }
 
 void AAuraCharacter::InitHUD()

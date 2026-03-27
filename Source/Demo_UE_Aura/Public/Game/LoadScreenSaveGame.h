@@ -37,10 +37,11 @@ class DEMO_UE_AURA_API ULoadScreenSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
+
+#pragma region SlotInfo
+
 	UPROPERTY()
 	FString PlayerName = FString("Default Name");
-	UPROPERTY()
-	int32 PlayerLevel = 1;
 
 	UPROPERTY()
 	FString MapName = FString("Default Map Name");
@@ -50,4 +51,37 @@ public:
 
 	UPROPERTY()
 	TEnumAsByte<ESaveSlotStatus> SaveSlotStatus = ESaveSlotStatus::Vacant;
+
+	/* Use for initialize necessary data when first enter game with this SaveGame */
+	UPROPERTY()
+	bool bIsFirstTimeLoadIn = true;
+
+#pragma endregion
+
+#pragma region PlayerInfo
+
+	UPROPERTY()
+	int32 PlayerLevel = 1;
+	UPROPERTY()
+	int32 PlayerEXP = 0;
+
+	UPROPERTY()
+	int32 SpellPoints = 0;
+	UPROPERTY()
+	int32 AttributePoints = 0;
+
+#pragma endregion
+
+#pragma region AttributeInfo
+
+	UPROPERTY()
+	float AS_Strength = 0;
+	UPROPERTY()
+	float AS_Intelligence = 0;
+	UPROPERTY()
+	float AS_Resilience = 0;
+	UPROPERTY()
+	float AS_Vigor = 0;
+
+#pragma endregion
 };

@@ -34,6 +34,9 @@ public:
 	virtual void OnRep_Burned() override;
 	virtual void OnRep_Stunned() override;
 
+protected:
+	void LoadProgress();
+
 #pragma region PlayerInterface
 	virtual int32 GetEXP_Implementation() override;
 

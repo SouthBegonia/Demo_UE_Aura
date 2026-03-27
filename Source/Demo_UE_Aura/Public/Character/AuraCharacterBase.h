@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "Game/LoadScreenSaveGame.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
@@ -192,6 +193,7 @@ protected:
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
 
 	virtual void InitializeDefaultAttributes() const;
+	virtual void InitializeSavedGameAttributes(ULoadScreenSaveGame& SaveGame);
 	void ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& EffectClass, float Level) const;
 
 

@@ -35,6 +35,15 @@ public:
 
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
+#pragma region SaveGame
+
+private:
+	bool FinalSaveGameToLocal(USaveGame* SaveGameObject, const FString& SlotName, const int32 SlotIndex) const;
+
+	USaveGame* FinalLoadGameFromLocal(const FString& SlotName, const int32 SlotIndex, bool bCheckNull = true) const;
+
+#pragma endregion
+
 #pragma region SaveGame (For LoadMenu)
 
 public:
@@ -78,9 +87,9 @@ private:
 public:
 	ULoadScreenSaveGame* RetrieveInGameSaveData();
 
-	bool ModifyInGameSaveData(ULoadScreenSaveGame& SaveData, FSaveGameModifiableParams& ModifyParams);
+	bool ModifyInGameSaveData(ULoadScreenSaveGame& SaveData, FSaveGameModifiableParams& ModifyParams, APlayerState* PlayerState);
 
-	bool SaveInGameProgressData(ULoadScreenSaveGame& SaveData, const FString& SlotName, int32 SlotIndex);
+	bool SaveInGameProgressData(ULoadScreenSaveGame& SaveData, const FString& SlotName, int32 SlotIndex) const;
 
 #pragma endregion
 };

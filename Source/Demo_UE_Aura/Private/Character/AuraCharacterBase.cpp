@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "AuraGameplayTags.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 #include "AbilitySystem/Passive/PassiveNiagaraComponent.h"
@@ -199,6 +200,11 @@ void AAuraCharacterBase::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
 
 	//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Black, FString::Printf(TEXT("Health = %f"), Cast<UAuraAttributeSet>(AttributeSet)->GetHealth()));
+}
+
+void AAuraCharacterBase::InitializeSavedGameAttributes(ULoadScreenSaveGame& SaveGame)
+{
+	UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(this, AbilitySystemComponent, &SaveGame);
 }
 
 void AAuraCharacterBase::ApplyEffectToSelf(const TSubclassOf<UGameplayEffect>& EffectClass, float Level) const

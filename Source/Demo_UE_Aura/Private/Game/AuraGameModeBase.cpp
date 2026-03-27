@@ -4,10 +4,12 @@
 #include "Game/AuraGameModeBase.h"
 
 #include "AuraLogChannels.h"
+#include "AbilitySystem/AuraAttributeSet.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/LoadScreenSaveGame.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/AuraPlayerState.h"
 #include "UI/ViewModel/MVVM_VM_LoadSlot.h"
 
 void AAuraGameModeBase::BeginPlay()
@@ -52,6 +54,36 @@ AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 	return nullptr;
 }
 
+bool AAuraGameModeBase::FinalSaveGameToLocal(USaveGame* SaveGameObject, const FString& SlotName, const int32 SlotIndex) const
+{
+	// Save data to local
+	const bool bSaveSuccess = UGameplayStatics::SaveGameToSlot(SaveGameObject, SlotName, SlotIndex);
+	if (!bSaveSuccess)
+		UE_LOGFMT(LogAura, Error, "[{FUNC}] : SaveGameToSlot failed: SlotName={SlotName}, SlotIndex={SlotIndex}", __FUNCTION__, SlotName, SlotIndex);
+	else
+		UE_LOGFMT(LogAura, Log, "[{FUNC}] : SaveGameToSlot successful: SlotName={SlotName}, SlotIndex={SlotIndex}", __FUNCTION__, SlotName, SlotIndex);
+
+	return bSaveSuccess;
+}
+
+USaveGame* AAuraGameModeBase::FinalLoadGameFromLocal(const FString& SlotName, const int32 SlotIndex, bool bCheckNull) const
+{
+	// Load Save data from local
+	if (!UGameplayStatics::DoesSaveGameExist(SlotName, SlotIndex))
+	{
+		if (bCheckNull)
+			UE_LOGFMT(LogAura, Log, "[{FUNC}] : Target Slot does not exist. SlotName=[{SlotName}], SlotIndex=[{SlotIndex}]", __FUNCTION__, SlotName, SlotIndex);
+
+		return nullptr;
+	}
+
+	const USaveGame* SaveGame = UGameplayStatics::LoadGameFromSlot(SlotName, SlotIndex);
+	if (SaveGame == nullptr && bCheckNull)
+		UE_LOGFMT(LogAura, Log, "[{FUNC}] : Load target Slot failed. SlotName=[{SlotName}], SlotIndex=[{SlotIndex}]", __FUNCTION__, SlotName, SlotIndex);
+
+	return const_cast<USaveGame*>(SaveGame);
+}
+
 #pragma region SaveGame ((For LoadMenu)
 
 bool AAuraGameModeBase::SaveTargetSlotData(const UMVVM_VM_LoadSlot& LoadSlot, int32 SlotIndex) const
@@ -64,12 +96,8 @@ bool AAuraGameModeBase::SaveTargetSlotData(const UMVVM_VM_LoadSlot& LoadSlot, in
 	ULoadScreenSaveGame* LoadScreenSaveGame = CreateSlotSaveObject(&LoadSlot);
 	LoadScreenSaveGame->SaveSlotStatus = Taken;
 
-	// Save data to local
-	const bool bSaveSuccess = UGameplayStatics::SaveGameToSlot(LoadScreenSaveGame, LoadSlot.GetLoadSlotName(), SlotIndex);
-	if (!bSaveSuccess)
-		UE_LOGFMT(LogTemp, Error, "[{FUNC}] : SaveGameToSlot failed: SlotName={SlotName}, SlotIndex={SlotIndex}", __FUNCTION__, LoadSlot.GetLoadSlotName(), SlotIndex);
-
-	return bSaveSuccess;
+	// Save data
+	return FinalSaveGameToLocal(LoadScreenSaveGame, LoadSlot.GetLoadSlotName(), SlotIndex);
 }
 
 bool AAuraGameModeBase::DeleteTargetSlotData(const UMVVM_VM_LoadSlot& LoadSlot, int32 SlotIndex) const
@@ -88,12 +116,8 @@ bool AAuraGameModeBase::DeleteTargetSlotData(const UMVVM_VM_LoadSlot& LoadSlot, 
 
 ULoadScreenSaveGame* AAuraGameModeBase::GetTargetSaveSlotData(const FString& SlotName, int32 SlotIndex, const bool bCreateWhenNull) const
 {
-	USaveGame* SaveGameObject = nullptr;
-
 	// Try LoadSaveData or Create a new one
-	if (UGameplayStatics::DoesSaveGameExist(SlotName, SlotIndex))
-		SaveGameObject = UGameplayStatics::LoadGameFromSlot(SlotName, SlotIndex);
-
+	USaveGame* SaveGameObject = FinalLoadGameFromLocal(SlotName, SlotIndex, false);
 	if (SaveGameObject == nullptr && bCreateWhenNull)
 		SaveGameObject = CreateSlotSaveObject(nullptr);
 
@@ -108,7 +132,10 @@ ULoadScreenSaveGame* AAuraGameModeBase::CreateSlotSaveObject(const UMVVM_VM_Load
 
 	if (LoadSlot != nullptr)
 	{
-		// here to set SaveData param
+		/*
+		 *  Here to set SaveData param (for InGame params)
+		 *		Another code is @see AAuraGameModeBase::ModifyInGameSaveData
+		 */
 		LoadScreenSaveGame->PlayerName = LoadSlot->GetPlayerName();
 		LoadScreenSaveGame->PlayerLevel = LoadSlot->GetPlayerLevel();
 		LoadScreenSaveGame->MapName = LoadSlot->GetMapName();
@@ -159,14 +186,39 @@ ULoadScreenSaveGame* AAuraGameModeBase::RetrieveInGameSaveData()
 	return InGameSaveSlotData;
 }
 
-bool AAuraGameModeBase::ModifyInGameSaveData(ULoadScreenSaveGame& SaveData, FSaveGameModifiableParams& ModifyParams)
+bool AAuraGameModeBase::ModifyInGameSaveData(ULoadScreenSaveGame& SaveData, FSaveGameModifiableParams& ModifyParams, APlayerState* PlayerState)
 {
+	/*
+	 *  Here to set SaveData param (for InGame params)
+	 *		Another code is @see AAuraGameModeBase::CreateSlotSaveObject
+	 */
+
 	SaveData.PlayerStartTag = ModifyParams.PlayerStartTag;
+
+	if (const AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(PlayerState))
+	{
+		SaveData.PlayerLevel = AuraPlayerState->GetPlayerLevel();
+		SaveData.PlayerEXP = AuraPlayerState->GetPlayerEXP();
+
+		SaveData.SpellPoints = AuraPlayerState->GetSpellPoints();
+		SaveData.AttributePoints = AuraPlayerState->GetAttributePoints();
+
+		const UAttributeSet* AttributeSet = AuraPlayerState->GetAttributeSet();
+		SaveData.AS_Strength = UAuraAttributeSet::GetStrengthAttribute().GetNumericValue(AttributeSet);
+		SaveData.AS_Intelligence = UAuraAttributeSet::GetIntelligenceAttribute().GetNumericValue(AttributeSet);
+		SaveData.AS_Resilience = UAuraAttributeSet::GetResilienceAttribute().GetNumericValue(AttributeSet);
+		SaveData.AS_Vigor = UAuraAttributeSet::GetVigorAttribute().GetNumericValue(AttributeSet);
+
+
+		SaveData.bIsFirstTimeLoadIn = false;
+	}
+	else
+		UE_LOGFMT(LogAura, Error, "[{FUNC}] : PlayerState is nullptr", __FUNCTION__);
 
 	return true;
 }
 
-bool AAuraGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame& SaveData, const FString& SlotName, int32 SlotIndex)
+bool AAuraGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame& SaveData, const FString& SlotName, int32 SlotIndex) const
 {
 	if (!UGameplayStatics::DoesSaveGameExist(SlotName, SlotIndex))
 	{
@@ -175,12 +227,8 @@ bool AAuraGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame& SaveData, co
 		//		- Delete the SaveData when playing
 	}
 
-	// Save data to local
-	const bool bSaveSuccess = UGameplayStatics::SaveGameToSlot(&SaveData, SlotName, SlotIndex);
-	if (!bSaveSuccess)
-		UE_LOGFMT(LogTemp, Error, "[{FUNC}] : SaveGameToSlot failed: SlotName={SlotName}, SlotIndex={SlotIndex}", __FUNCTION__, SlotName, SlotIndex);
-
-	return bSaveSuccess;
+	// Save data
+	return FinalSaveGameToLocal(&SaveData, SlotName, SlotIndex);;
 }
 
 

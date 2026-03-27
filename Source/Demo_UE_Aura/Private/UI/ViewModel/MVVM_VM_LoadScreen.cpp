@@ -120,6 +120,7 @@ void UMVVM_VM_LoadScreen::SlotButtonPressed_Play()
 			AuraGameInstance->PlayerStartTag = CurrentLoadSlot->GetPlayerStartTag();
 			AuraGameInstance->LoadSlotName = CurrentLoadSlot->GetLoadSlotName();
 			AuraGameInstance->LoadSlotIndex = CurrentLoadSlot->GetSlotIndex();
+			AuraGameInstance->MarkLoadedGameSave();
 
 			// Travel Map
 			AuraGameMode->TravelToMap(CurrentLoadSlot->GetMapName());
