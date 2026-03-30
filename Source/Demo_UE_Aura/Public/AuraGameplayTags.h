@@ -116,6 +116,7 @@ public:
 	FGameplayTag Abilities_Passive_HaloOfProtection;
 	FGameplayTag Abilities_Passive_LifeSiphon;
 	FGameplayTag Abilities_Passive_ManaSiphon;
+	FGameplayTag Abilities_Passive_ListenForEvent;
 
 	/*
 	 * Locked : The status of an ability that have not yet met the unlocking conditions

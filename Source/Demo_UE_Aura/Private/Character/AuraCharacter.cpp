@@ -61,10 +61,9 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 
 	// Init ability actor info for the Server
 	InitAbilityActorInfo();
+	InitHUD();
 
 	LoadProgress();
-
-	InitHUD();
 }
 
 // Client Only
@@ -76,7 +75,6 @@ void AAuraCharacter::OnRep_PlayerState()
 
 	// Init ability actor info for the Client
 	InitAbilityActorInfo();
-
 	InitHUD();
 }
 
@@ -93,6 +91,7 @@ void AAuraCharacter::LoadProgress()
 				auto InitializeInfoFunc = [this, &SaveData](const bool bDefaultInitialize)
 				{
 					AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(GetPlayerState());
+					UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(GetAbilitySystemComponent());
 
 					// Init PlayerInfo
 					AuraPlayerState->SetPlayerLevel(bDefaultInitialize ? 1 : SaveData->PlayerLevel);
@@ -109,11 +108,12 @@ void AAuraCharacter::LoadProgress()
 
 					// Add CharacterAbility
 					if (bDefaultInitialize)
+						// add CharacterAbility and setting Level with DefaultConfig
 						AddCharacterAbilities();
 					else
 					{
-						// TODO : add CharacterAbility and setting Level with SaveGame data
-						AddCharacterAbilities();
+						// add CharacterAbility and setting Level with SaveGame data
+						AuraASC->AddCharacterAbilitiesFromSaveData(SaveData);
 					}
 
 					if (bDefaultInitialize)

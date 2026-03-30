@@ -24,5 +24,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	void ActivateIfEquipped(class UAuraAbilitySystemComponent* AuraASC);
+
 	void OnPassiveActivate(const FGameplayTag& AbilityTag, bool bActivate);
 };

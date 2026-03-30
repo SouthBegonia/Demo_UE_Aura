@@ -4,7 +4,10 @@
 #include "Game/AuraGameModeBase.h"
 
 #include "AuraLogChannels.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "AbilitySystem/Data/AbilityInfo.h"
 #include "Game/AuraGameInstance.h"
 #include "Game/LoadScreenSaveGame.h"
 #include "GameFramework/PlayerStart.h"
@@ -197,6 +200,8 @@ bool AAuraGameModeBase::ModifyInGameSaveData(ULoadScreenSaveGame& SaveData, FSav
 
 	if (const AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(PlayerState))
 	{
+		UAuraAbilitySystemComponent* const AuraASC = Cast<UAuraAbilitySystemComponent>(AuraPlayerState->GetAbilitySystemComponent());
+
 		SaveData.PlayerLevel = AuraPlayerState->GetPlayerLevel();
 		SaveData.PlayerEXP = AuraPlayerState->GetPlayerEXP();
 
@@ -208,6 +213,30 @@ bool AAuraGameModeBase::ModifyInGameSaveData(ULoadScreenSaveGame& SaveData, FSav
 		SaveData.AS_Intelligence = UAuraAttributeSet::GetIntelligenceAttribute().GetNumericValue(AttributeSet);
 		SaveData.AS_Resilience = UAuraAttributeSet::GetResilienceAttribute().GetNumericValue(AttributeSet);
 		SaveData.AS_Vigor = UAuraAttributeSet::GetVigorAttribute().GetNumericValue(AttributeSet);
+
+
+		SaveData.SavedAbilities.Empty();
+		if (HasAuthority())
+		{
+			FForEachAbility SavedAbilityDelegate;
+			SavedAbilityDelegate.BindLambda([this, &AuraASC, &SaveData](const FGameplayAbilitySpec& AbilitySpec)
+			{
+				const FGameplayTag AbilityTag = AuraASC->GetAbilityTagFromSpec(AbilitySpec);
+				const UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(this);
+				const FAuraAbilityInfo Info = AbilityInfo->FindAbilityInfoForTag(AbilityTag);
+
+				FSavedAbility SavedAbility;
+				SavedAbility.GameplayAbilityClass = Info.AbilityClass;
+				SavedAbility.AbilityTag = Info.AbilityTag;
+				SavedAbility.AbilityTypeTag = Info.AbilityTypeTag;
+				SavedAbility.AbilityLevel = AbilitySpec.Level;
+				SavedAbility.AbilityInputTag = AuraASC->GetInputTagFromSpec(AbilitySpec);
+				SavedAbility.AbilityStatusTag = AuraASC->GetStatusFromSpec(AbilitySpec);
+
+				SaveData.SavedAbilities.AddUnique(SavedAbility);
+			});
+			AuraASC->ForEachAbility(SavedAbilityDelegate);
+		}
 
 
 		SaveData.bIsFirstTimeLoadIn = false;

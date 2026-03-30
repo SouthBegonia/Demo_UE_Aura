@@ -18,7 +18,7 @@ struct FAreYouSureWidgetParam
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadWrite)
-	bool bIsSingleBtn;
+	bool bIsSingleBtn = false;
 
 	UPROPERTY(BlueprintReadWrite)
 	FString TitleText = TEXT("Are You Sure?");
@@ -45,7 +45,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RefreshShow(const FAreYouSureWidgetParam& param);
 
-	UFUNCTION(BlueprintCallable, Category="Aura|UI", meta=(DefaultToSelf = "WorldContextObject"))
+	UFUNCTION(BlueprintCallable, Category="Aura|UI", meta=(DefaultToSelf = "WorldContextObject", ToolTip="[Create and show ShowAreYouSureWidget]\n- Setting Param to control display mode and display content.\n- Bind Button's delegate by BtnOneClickDelegate/BtnTwoLClickDelegate/BtnTwoRClickDelegate"))
 	static UAreYouSureWidget* CreateAndShowAreYouSureWidget(const UObject* WorldContextObject, TSubclassOf<UAreYouSureWidget> WidgetClass, const FAreYouSureWidgetParam& Param);
 
 protected:
