@@ -192,6 +192,7 @@ public:
 #pragma region Effects
 
 	FGameplayTag Effects_HitReact;
+	FGameplayTag Effects_Shocked;
 
 #pragma endregion
 

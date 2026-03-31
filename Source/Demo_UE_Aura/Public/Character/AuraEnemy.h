@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Character/AuraCharacterBase.h"
 #include "Interaction/EnemyInterface.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
@@ -29,6 +28,9 @@ protected:
 	virtual void InitAbilityActorInfo() override;
 	virtual void InitializeDefaultAttributes() const override;
 	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
+
+	virtual void SetIsBeingShocked_Implementation(bool bInShock) override;
+	void ShockLoopTagChanged(const bool bInShockLoop);
 
 
 	UPROPERTY(BlueprintAssignable)
@@ -93,6 +95,18 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<AAuraAIController> AuraAIController;
+
+#pragma endregion
+
+#pragma region Debug
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Aura|DEBUG")
+	TEnumAsByte<EEnemyDebugState> EnemyDebugState = EEnemyDebugState::None;
+
+	virtual bool InDebugState_Implementation() override;
+	virtual bool InInDebugState_Implementation(EEnemyDebugState TargetState) override;
+	virtual EEnemyDebugState GetDebugState_Implementation() override;
 
 #pragma endregion
 };

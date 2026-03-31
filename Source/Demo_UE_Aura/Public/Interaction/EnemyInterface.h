@@ -13,6 +13,14 @@ class UEnemyInterface : public UInterface
 	GENERATED_BODY()
 };
 
+UENUM(BlueprintType)
+enum EEnemyDebugState : uint8
+{
+	None,
+
+	Idle,	// Do nothing
+};
+
 /**
  * 
  */
@@ -24,6 +32,13 @@ class DEMO_UE_AURA_API IEnemyInterface
 public:
 	virtual void HighlightActor() = 0;
 	virtual void UnHighlightActor() = 0;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool InDebugState();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	bool InInDebugState(EEnemyDebugState TargetState);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	EEnemyDebugState GetDebugState();
 
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)

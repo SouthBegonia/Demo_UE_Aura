@@ -53,6 +53,7 @@ void AAuraEnemy::PossessedBy(AController* NewController)
 	const bool bIsRangedAttacker = CharacterClass != ECharacterClass::Warrior;
 	AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), bIsRangedAttacker);
 	AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("Dead"), false);
+	AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("InShockLoop"), false);
 }
 
 void AAuraEnemy::BeginPlay()
@@ -124,6 +125,19 @@ void AAuraEnemy::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("Stunned"), bIsStunned);
 }
 
+void AAuraEnemy::SetIsBeingShocked_Implementation(bool bInShock)
+{
+	Super::SetIsBeingShocked_Implementation(bInShock);
+
+	ShockLoopTagChanged(bInShock);
+}
+
+void AAuraEnemy::ShockLoopTagChanged(const bool bInShockLoop)
+{
+	if (AuraAIController && AuraAIController->GetBlackboardComponent())
+		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("InShockLoop"), bInShockLoop);
+}
+
 void AAuraEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	bHitReacting = NewCount > 0;
@@ -175,4 +189,19 @@ void AAuraEnemy::UnHighlightActor()
 
 	GetMesh()->SetRenderCustomDepth(false);
 	Weapon->SetRenderCustomDepth(false);
+}
+
+bool AAuraEnemy::InDebugState_Implementation()
+{
+	return EnemyDebugState != EEnemyDebugState::None;
+}
+
+bool AAuraEnemy::InInDebugState_Implementation(EEnemyDebugState TargetState)
+{
+	return EnemyDebugState == TargetState;
+}
+
+EEnemyDebugState AAuraEnemy::GetDebugState_Implementation()
+{
+	return EnemyDebugState;
 }

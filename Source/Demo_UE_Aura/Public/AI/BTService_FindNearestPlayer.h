@@ -15,10 +15,14 @@ class DEMO_UE_AURA_API UBTService_FindNearestPlayer : public UBTService_Blueprin
 	GENERATED_BODY()
 
 protected:
+	virtual void OnSearchStart(FBehaviorTreeSearchData& SearchData) override;
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FBlackboardKeySelector TargetToFollowSelector;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	FBlackboardKeySelector DistanceToTargetSelector;
+
+private:
+	void FindAndSetNearestPlayer();
 };
