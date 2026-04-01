@@ -48,6 +48,39 @@ struct FSavedAbility
 	}
 };
 
+USTRUCT()
+struct FSavedActor
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FName ActorName = FName();
+
+	UPROPERTY()
+	FTransform ActorTransform = FTransform();
+
+	// Serialized variables from the Actor - only those marked with saveGame specifier
+	UPROPERTY()
+	TArray<uint8> Bytes;
+
+	bool operator==(const FSavedActor& Target) const
+	{
+		return ActorName == Target.ActorName;
+	}
+};
+
+USTRUCT()
+struct FSavedMap
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString MapAssetName = FString();
+
+	UPROPERTY()
+	TArray<FSavedActor> SavedActors;
+};
+
 /*
  * FSaveGameModifiableParams
  * - using for InGame, not LoadMenu
@@ -123,6 +156,17 @@ public:
 
 	UPROPERTY()
 	TArray<FSavedAbility> SavedAbilities;
+
+#pragma endregion
+
+#pragma region World/Map
+
+	UPROPERTY()
+	TArray<FSavedMap> SavedMaps;
+
+public:
+	FSavedMap GetSavedMapWithMapName(const FString& InMapName);
+	bool HasMap(const FString& InMapName) const;
 
 #pragma endregion
 };

@@ -91,5 +91,10 @@ public:
 
 	bool SaveInGameProgressData(ULoadScreenSaveGame& SaveData, const FString& SlotName, int32 SlotIndex) const;
 
+	bool LoadWorldStateWithSaveGame(UWorld* InWorld, ULoadScreenSaveGame* SaveData = nullptr);
+
+private:
+	void ModifyInGameSaveData_WorldState(ULoadScreenSaveGame& SaveData, UWorld* InWorld);
+
 #pragma endregion
 };

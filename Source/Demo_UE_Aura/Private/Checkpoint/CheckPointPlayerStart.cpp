@@ -23,12 +23,36 @@ ACheckPointPlayerStart::ACheckPointPlayerStart(const FObjectInitializer& ObjectI
 
 }
 
+void ACheckPointPlayerStart::OnActorLoaded_Implementation()
+{
+	UE_LOGFMT(LogTemp, Log, "[{FUNC}] : {Log}", __FUNCTION__,  TEXT("11111"));
+
+	// Do this in BeginPlay
+	if (bReached)
+	{
+		// BP show effect
+		//CheckPointReached();
+
+		// Limit SavingGame by bReached in ACheckPointPlayerStart::OnSphereOverlap(), no need for set Collision
+		//	SphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+
 void ACheckPointPlayerStart::BeginPlay()
 {
 	Super::BeginPlay();
 
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ACheckPointPlayerStart::OnSphereOverlap);
 	SphereComp->OnComponentEndOverlap.AddDynamic(this, &ACheckPointPlayerStart::OnSphereEndOverlap);
+
+	if (bReached)
+	{
+		// BP show effect
+		CheckPointReached();
+
+		// Limit SavingGame by bReached in ACheckPointPlayerStart::OnSphereOverlap(), no need for set Collision
+		//	SphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 }
 
 void ACheckPointPlayerStart::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
@@ -36,6 +60,8 @@ void ACheckPointPlayerStart::OnSphereOverlap(UPrimitiveComponent* OverlappedComp
 {
 	if (OtherActor->ActorHasTag(FName("Player")))
 	{
+		//if (bReached) return;	// maybe we shouldn't limit the right of SavingGame
+
 		LastReachedPlayer = OtherActor;
 
 		// BP show effect
@@ -44,7 +70,18 @@ void ACheckPointPlayerStart::OnSphereOverlap(UPrimitiveComponent* OverlappedComp
 		// SaveGame
 		if (PlayerStartTag.IsNone())
 			UE_LOGFMT(LogAura, Warning, "[{FUNC}] : PlayerStartTag is empty. Obj={Log}", __FUNCTION__, GetName());
-		IPlayerInterface::Execute_SaveProgress(OtherActor, PlayerStartTag);
+		bReached = true;	// set value before Save it
+		bool bSavedSuccessful = IPlayerInterface::Execute_SaveProgress(OtherActor, PlayerStartTag);
+		if (bSavedSuccessful)
+		{
+			bReached = true;
+			UE_LOGFMT(LogAura, Log, "[{FUNC}] : SaveGame successful.", __FUNCTION__);
+		}
+		else
+		{
+			bReached = false;
+			UE_LOGFMT(LogAura, Error, "[{FUNC}] : SaveGame failed.", __FUNCTION__);
+		}
 	}
 }
 
@@ -52,6 +89,9 @@ void ACheckPointPlayerStart::OnSphereEndOverlap(UPrimitiveComponent* OverlappedC
 {
 	if (OtherActor->ActorHasTag(FName("Player")))
 	{
+		if (bReached)
+			return;
+
 		CheckPointFled();
 	}
 }

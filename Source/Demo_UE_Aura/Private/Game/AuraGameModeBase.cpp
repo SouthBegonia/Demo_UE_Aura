@@ -4,6 +4,7 @@
 #include "Game/AuraGameModeBase.h"
 
 #include "AuraLogChannels.h"
+#include "EngineUtils.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "AbilitySystem/AuraAttributeSet.h"
@@ -11,8 +12,10 @@
 #include "Game/AuraGameInstance.h"
 #include "Game/LoadScreenSaveGame.h"
 #include "GameFramework/PlayerStart.h"
+#include "Interaction/SaveInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/AuraPlayerState.h"
+#include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "UI/ViewModel/MVVM_VM_LoadSlot.h"
 
 void AAuraGameModeBase::BeginPlay()
@@ -62,9 +65,9 @@ bool AAuraGameModeBase::FinalSaveGameToLocal(USaveGame* SaveGameObject, const FS
 	// Save data to local
 	const bool bSaveSuccess = UGameplayStatics::SaveGameToSlot(SaveGameObject, SlotName, SlotIndex);
 	if (!bSaveSuccess)
-		UE_LOGFMT(LogAura, Error, "[{FUNC}] : SaveGameToSlot failed: SlotName={SlotName}, SlotIndex={SlotIndex}", __FUNCTION__, SlotName, SlotIndex);
+		UE_LOGFMT(LogAura_SaveGame, Error, "[{FUNC}] : SaveGameToSlot failed: SlotName={SlotName}, SlotIndex={SlotIndex}", __FUNCTION__, SlotName, SlotIndex);
 	else
-		UE_LOGFMT(LogAura, Log, "[{FUNC}] : SaveGameToSlot successful: SlotName={SlotName}, SlotIndex={SlotIndex}", __FUNCTION__, SlotName, SlotIndex);
+		UE_LOGFMT(LogAura_SaveGame, Log, "[{FUNC}] : SaveGameToSlot successful: SlotName={SlotName}, SlotIndex={SlotIndex}", __FUNCTION__, SlotName, SlotIndex);
 
 	return bSaveSuccess;
 }
@@ -75,14 +78,14 @@ USaveGame* AAuraGameModeBase::FinalLoadGameFromLocal(const FString& SlotName, co
 	if (!UGameplayStatics::DoesSaveGameExist(SlotName, SlotIndex))
 	{
 		if (bCheckNull)
-			UE_LOGFMT(LogAura, Log, "[{FUNC}] : Target Slot does not exist. SlotName=[{SlotName}], SlotIndex=[{SlotIndex}]", __FUNCTION__, SlotName, SlotIndex);
+			UE_LOGFMT(LogAura_SaveGame, Log, "[{FUNC}] : Target Slot does not exist. SlotName=[{SlotName}], SlotIndex=[{SlotIndex}]", __FUNCTION__, SlotName, SlotIndex);
 
 		return nullptr;
 	}
 
 	const USaveGame* SaveGame = UGameplayStatics::LoadGameFromSlot(SlotName, SlotIndex);
 	if (SaveGame == nullptr && bCheckNull)
-		UE_LOGFMT(LogAura, Log, "[{FUNC}] : Load target Slot failed. SlotName=[{SlotName}], SlotIndex=[{SlotIndex}]", __FUNCTION__, SlotName, SlotIndex);
+		UE_LOGFMT(LogAura_SaveGame, Log, "[{FUNC}] : Load target Slot failed. SlotName=[{SlotName}], SlotIndex=[{SlotIndex}]", __FUNCTION__, SlotName, SlotIndex);
 
 	return const_cast<USaveGame*>(SaveGame);
 }
@@ -181,7 +184,7 @@ ULoadScreenSaveGame* AAuraGameModeBase::RetrieveInGameSaveData()
 	ULoadScreenSaveGame* InGameSaveSlotData = GetTargetSaveSlotData(InGameLoadSlotName, InGameLoadSlotIndex, false);
 	if (InGameSaveSlotData == nullptr)
 	{
-		UE_LOGFMT(LogAura, Error, "[{FUNC}] : Can't get SlotData. InGameLoadSlotName={Name}, InGameLoadSlotIndex={Index}", __FUNCTION__, InGameLoadSlotName, InGameLoadSlotIndex);
+		UE_LOGFMT(LogAura_SaveGame, Error, "[{FUNC}] : Can't get SlotData. InGameLoadSlotName={Name}, InGameLoadSlotIndex={Index}", __FUNCTION__, InGameLoadSlotName, InGameLoadSlotIndex);
 		// this shouldn't happen, there are possible situations:
 		//		- Delete the SaveData when playing
 	}
@@ -202,19 +205,22 @@ bool AAuraGameModeBase::ModifyInGameSaveData(ULoadScreenSaveGame& SaveData, FSav
 	{
 		UAuraAbilitySystemComponent* const AuraASC = Cast<UAuraAbilitySystemComponent>(AuraPlayerState->GetAbilitySystemComponent());
 
+		// PlayerInfo
 		SaveData.PlayerLevel = AuraPlayerState->GetPlayerLevel();
 		SaveData.PlayerEXP = AuraPlayerState->GetPlayerEXP();
-
 		SaveData.SpellPoints = AuraPlayerState->GetSpellPoints();
 		SaveData.AttributePoints = AuraPlayerState->GetAttributePoints();
+		UE_LOGFMT(LogAura_SaveGame, Log, "[SaveGame]-[{FUNC}] : PlayerInfo Done.", __FUNCTION__);
 
+		// AttributeInfo
 		const UAttributeSet* AttributeSet = AuraPlayerState->GetAttributeSet();
 		SaveData.AS_Strength = UAuraAttributeSet::GetStrengthAttribute().GetNumericValue(AttributeSet);
 		SaveData.AS_Intelligence = UAuraAttributeSet::GetIntelligenceAttribute().GetNumericValue(AttributeSet);
 		SaveData.AS_Resilience = UAuraAttributeSet::GetResilienceAttribute().GetNumericValue(AttributeSet);
 		SaveData.AS_Vigor = UAuraAttributeSet::GetVigorAttribute().GetNumericValue(AttributeSet);
+		UE_LOGFMT(LogAura_SaveGame, Log, "[SaveGame]-[{FUNC}] : AttributeInfo Done.", __FUNCTION__);
 
-
+		// Abilities
 		SaveData.SavedAbilities.Empty();
 		if (HasAuthority())
 		{
@@ -236,13 +242,16 @@ bool AAuraGameModeBase::ModifyInGameSaveData(ULoadScreenSaveGame& SaveData, FSav
 				SaveData.SavedAbilities.AddUnique(SavedAbility);
 			});
 			AuraASC->ForEachAbility(SavedAbilityDelegate);
+			UE_LOGFMT(LogAura_SaveGame, Log, "[SaveGame]-[{FUNC}] : Abilities Done.", __FUNCTION__);
 		}
 
+		// World/Map
+		ModifyInGameSaveData_WorldState(SaveData, GetWorld());
 
 		SaveData.bIsFirstTimeLoadIn = false;
 	}
 	else
-		UE_LOGFMT(LogAura, Error, "[{FUNC}] : PlayerState is nullptr", __FUNCTION__);
+		UE_LOGFMT(LogAura_SaveGame, Error, "[{FUNC}] : PlayerState is nullptr", __FUNCTION__);
 
 	return true;
 }
@@ -251,13 +260,105 @@ bool AAuraGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame& SaveData, co
 {
 	if (!UGameplayStatics::DoesSaveGameExist(SlotName, SlotIndex))
 	{
-		UE_LOGFMT(LogAura, Error, "[{FUNC}] : Can't get SlotData. SlotName={Name}, SlotIndex={Index}", __FUNCTION__, SlotName, SlotIndex);
+		UE_LOGFMT(LogAura_SaveGame, Error, "[{FUNC}] : Can't get SlotData. SlotName={Name}, SlotIndex={Index}", __FUNCTION__, SlotName, SlotIndex);
 		// this shouldn't happen, there are possible situations:
 		//		- Delete the SaveData when playing
 	}
 
 	// Save data
 	return FinalSaveGameToLocal(&SaveData, SlotName, SlotIndex);;
+}
+
+void AAuraGameModeBase::ModifyInGameSaveData_WorldState(ULoadScreenSaveGame& SaveData, UWorld* InWorld)
+{
+	FString WorldName = InWorld->GetMapName();
+	WorldName.RemoveFromStart(InWorld->StreamingLevelsPrefix);
+
+	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(InWorld->GetGameInstance());
+	check(AuraGameInstance);
+
+
+	if (!SaveData.HasMap(WorldName))
+	{
+		FSavedMap NewSavedMap;
+		NewSavedMap.MapAssetName = WorldName;
+
+		SaveData.SavedMaps.Add(NewSavedMap);
+	}
+
+
+	FSavedMap SavedMap = SaveData.GetSavedMapWithMapName(WorldName);
+
+	// SavedActors
+	SavedMap.SavedActors.Empty();
+	for (FActorIterator ActorIterator(InWorld); ActorIterator; ++ActorIterator)
+	{
+		AActor* ItActor = *ActorIterator;
+		if (!IsValid(ItActor) || !ItActor->Implements<USaveInterface>())
+			continue;
+
+		FSavedActor SavedActor;
+		SavedActor.ActorName = ItActor->GetFName();
+		SavedActor.ActorTransform = ItActor->GetActorTransform();
+
+		FMemoryWriter MemoryWriter(SavedActor.Bytes);
+		FObjectAndNameAsStringProxyArchive Archive(MemoryWriter, true);
+		Archive.ArIsSaveGame = true;
+
+		ItActor->Serialize(Archive);
+
+		SavedMap.SavedActors.AddUnique(SavedActor);
+	}
+
+	// SavedMaps
+	for (FSavedMap& MapToReplace : SaveData.SavedMaps)
+	{
+		if (MapToReplace.MapAssetName == WorldName)
+			MapToReplace = SavedMap;
+	}
+	UE_LOGFMT(LogAura_SaveGame, Log, "[SaveGame]-[{FUNC}] : WorldState Done.", __FUNCTION__);
+}
+
+bool AAuraGameModeBase::LoadWorldStateWithSaveGame(UWorld* InWorld, ULoadScreenSaveGame* SaveData)
+{
+	FString WorldName = InWorld->GetMapName();
+	WorldName.RemoveFromStart(InWorld->StreamingLevelsPrefix);
+
+	bool bLoadSuccessful = false;
+
+	if (SaveData == nullptr) SaveData = RetrieveInGameSaveData();
+	if (SaveData)
+	{
+		for (FActorIterator ActorIterator(InWorld); ActorIterator; ++ActorIterator)
+		{
+			AActor* ItActor = *ActorIterator;
+			if (!IsValid(ItActor) || !ItActor->Implements<USaveInterface>())
+				continue;
+
+			for (FSavedActor& SavedActor : SaveData->GetSavedMapWithMapName(WorldName).SavedActors)
+			{
+				if (SavedActor.ActorName == ItActor->GetFName())
+				{
+					// Recovery data in Actor by SaveGame data
+					if (ISaveInterface::Execute_ShouldLoadTransform(ItActor))
+					{
+						ItActor->SetActorTransform(SavedActor.ActorTransform);
+					}
+
+
+					FMemoryReader MemoryReader(SavedActor.Bytes);
+					FObjectAndNameAsStringProxyArchive Archive(MemoryReader, true);
+					Archive.ArIsSaveGame = true;
+					ItActor->Serialize(Archive);	// converts binary bytes back into variables
+
+					ISaveInterface::Execute_OnActorLoaded(ItActor);
+				}
+			}
+		}
+		bLoadSuccessful = true;
+	}
+
+	return bLoadSuccessful;
 }
 
 

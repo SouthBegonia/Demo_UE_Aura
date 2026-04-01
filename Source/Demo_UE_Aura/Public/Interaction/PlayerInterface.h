@@ -62,5 +62,5 @@ public:
 
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void SaveProgress(const FName& CheckpointTag);
+	bool SaveProgress(const FName& CheckpointTag);
 };

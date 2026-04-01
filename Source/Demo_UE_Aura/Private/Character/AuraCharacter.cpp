@@ -88,7 +88,7 @@ void AAuraCharacter::LoadProgress()
 		{
 			if (ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData())
 			{
-				auto InitializeInfoFunc = [this, &SaveData](const bool bDefaultInitialize)
+				auto InitializeInfoFunc = [this, &SaveData, &AuraGameMode](const bool bDefaultInitialize)
 				{
 					AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(GetPlayerState());
 					UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(GetAbilitySystemComponent());
@@ -98,13 +98,19 @@ void AAuraCharacter::LoadProgress()
 					AuraPlayerState->SetPlayerEXP(bDefaultInitialize ? 0 : SaveData->PlayerEXP);
 					AuraPlayerState->SetAttributePoints(bDefaultInitialize ? 0 : SaveData->AttributePoints);
 					AuraPlayerState->SetSpellPoints(bDefaultInitialize? 0 : SaveData->SpellPoints);
+					UE_LOGFMT(LogAura_SaveGame, Log, "[LoadGame]-[{FUNC}] : PlayerInfo Done.", __FUNCTION__);
 
 					// Init AttributeValue
 					if (bDefaultInitialize)
+					{
 						InitializeDefaultAttributes();
+						UE_LOGFMT(LogAura_SaveGame, Log, "[LoadGame]-[{FUNC}] : AttributeValue Done.\nInitialize Attributes by DefaultAttributes for first time login.", __FUNCTION__);
+					}
 					else
+					{
 						InitializeSavedGameAttributes(*SaveData);
-
+						UE_LOGFMT(LogAura_SaveGame, Log, "[LoadGame]-[{FUNC}] : AttributeValue Done.\nInitialize Attributes by SaveData for each time login.", __FUNCTION__);
+					}
 
 					// Add CharacterAbility
 					if (bDefaultInitialize)
@@ -115,12 +121,13 @@ void AAuraCharacter::LoadProgress()
 						// add CharacterAbility and setting Level with SaveGame data
 						AuraASC->AddCharacterAbilitiesFromSaveData(SaveData);
 					}
+					UE_LOGFMT(LogAura_SaveGame, Log, "[LoadGame]-[{FUNC}] : CharacterAbilities Done.", __FUNCTION__);
 
-					if (bDefaultInitialize)
-						UE_LOGFMT(LogAura, Log, "[{FUNC}] : Initialize Attributes by DefaultAttributes for first time login.", __FUNCTION__);
-					else
-						UE_LOGFMT(LogAura, Log, "[{FUNC}] : Initialize Attributes by SaveData for each time login.", __FUNCTION__);
+					// Init WorldState
+					AuraGameMode->LoadWorldStateWithSaveGame(GetWorld(), SaveData);
+					UE_LOGFMT(LogAura_SaveGame, Log, "[LoadGame]-[{FUNC}] : WorldState Done.", __FUNCTION__);
 				};
+
 
 				// This means these AttributeValue had never been initialized, we have to initialize them with DefaultConfig
 				if (SaveData->bIsFirstTimeLoadIn)
@@ -140,7 +147,7 @@ void AAuraCharacter::LoadProgress()
 	}
 
 	if (!bLoadSuccessful)
-		UE_LOGFMT(LogAura, Log, "[{FUNC}] : Load progress failed.", __FUNCTION__);
+		UE_LOGFMT(LogAura_SaveGame, Log, "[{FUNC}] : Load progress failed.", __FUNCTION__);
 }
 
 int32 AAuraCharacter::GetPlayerLevel_Implementation()
@@ -277,7 +284,7 @@ void AAuraCharacter::HideMagicCircle_Implementation() const
 	}
 }
 
-void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
+bool AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 {
 	bool SaveSuccessful = false;
 
@@ -302,6 +309,8 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 			AuraGameInstance->PlayerStartTag = CheckpointTag;
 		}
 	}
+
+	return SaveSuccessful;
 }
 
 // Execute On Server
