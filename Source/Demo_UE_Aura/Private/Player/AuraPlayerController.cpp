@@ -245,6 +245,15 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 			// Click LMB to Move : Navigation
 			if (GetASC() && !GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
 			{
+				bool bShowClickNiagaraSys = true;
+
+				// Modify CachedDestination
+				if (CurrentHighlight != nullptr && CurrentHighlightActor.IsValid())
+				{
+					IHighlightInterface::Execute_SetMoveToLocation(CurrentHighlightActor.Get(), CachedDestination);
+					bShowClickNiagaraSys = false;
+				}
+
 				if (UNavigationPath* NavPath = UNavigationSystemV1::FindPathToLocationSynchronously(this, ControlledPawn->GetActorLocation(), CachedDestination))
 				{
 					Spline->ClearSplinePoints();
@@ -258,7 +267,8 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 						CachedDestination = NavPath->PathPoints.Last();
 						bAutoRunning = true;
 
-						UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
+						if (bShowClickNiagaraSys)
+							UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ClickNiagaraSystem, CachedDestination);
 					}else
 					{
 						bAutoRunning = false;

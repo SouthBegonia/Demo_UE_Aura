@@ -3,7 +3,9 @@
 
 #include "Checkpoint/CheckPointPlayerStart.h"
 #include "AuraLogChannels.h"
+#include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
+#include "Demo_UE_Aura/Demo_UE_Aura.h"
 #include "Interaction/PlayerInterface.h"
 
 ACheckPointPlayerStart::ACheckPointPlayerStart(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -21,6 +23,10 @@ ACheckPointPlayerStart::ACheckPointPlayerStart(const FObjectInitializer& ObjectI
 	SphereComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 	SphereComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 
+	MoveToSign = CreateDefaultSubobject<USceneComponent>(TEXT("MoveToSign"));
+	MoveToSign->SetupAttachment(GetRootComponent());
+
+	CheckpointMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_TAN);
 }
 
 void ACheckPointPlayerStart::OnActorLoaded_Implementation()
@@ -94,4 +100,21 @@ void ACheckPointPlayerStart::OnSphereEndOverlap(UPrimitiveComponent* OverlappedC
 
 		CheckPointFled();
 	}
+}
+
+
+void ACheckPointPlayerStart::HighlightActor_Implementation()
+{
+	CheckpointMesh->SetRenderCustomDepth(true);
+	//CheckpointMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_TAN);
+}
+
+void ACheckPointPlayerStart::UnHighlightActor_Implementation()
+{
+	CheckpointMesh->SetRenderCustomDepth(false);
+}
+
+void ACheckPointPlayerStart::SetMoveToLocation_Implementation(FVector& OutDestination)
+{
+	OutDestination = MoveToSign->GetComponentLocation();
 }

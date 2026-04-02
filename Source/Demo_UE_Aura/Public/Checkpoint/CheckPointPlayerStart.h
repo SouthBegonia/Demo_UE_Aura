@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Demo_UE_Aura/Demo_UE_Aura.h"
 #include "GameFramework/PlayerStart.h"
+#include "Interaction/HighlightInterface.h"
 #include "Interaction/SaveInterface.h"
 #include "CheckPointPlayerStart.generated.h"
 
@@ -12,7 +14,7 @@ class USphereComponent;
  * 
  */
 UCLASS()
-class DEMO_UE_AURA_API ACheckPointPlayerStart : public APlayerStart, public ISaveInterface
+class DEMO_UE_AURA_API ACheckPointPlayerStart : public APlayerStart, public ISaveInterface, public IHighlightInterface
 {
 	GENERATED_BODY()
 
@@ -34,6 +36,14 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void CheckPointFled();
 
+public:
+	UPROPERTY(EditDefaultsOnly, Category="Aura")
+	int32 CustomDepthStencilOverride = CUSTOM_DEPTH_TAN;
+
+	virtual void HighlightActor_Implementation() override;
+	virtual void UnHighlightActor_Implementation() override;
+	virtual void SetMoveToLocation_Implementation(FVector& OutDestination) override;
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true))
 	TObjectPtr<UStaticMeshComponent> CheckpointMesh;
@@ -41,6 +51,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USphereComponent> SphereComp;
 
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USceneComponent> MoveToSign;
 
 
 	UPROPERTY()
