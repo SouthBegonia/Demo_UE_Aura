@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Interaction/HighlightInterface.h"
 #include "AuraPlayerController.generated.h"
 
 class AMagicCircle;
@@ -17,6 +18,14 @@ class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 class IEnemyInterface;
+
+enum ETargetingStatus
+{
+	NotTargeting,
+
+	TargetingEnemy,
+	TargetingMapEntrance,
+};
 
 /**
  * 
@@ -84,7 +93,7 @@ private:
 	float FollowTime = 0.f;
 	float ShortPressThreshold = 0.5f;
 	bool bAutoRunning = false;
-	bool bTargeting = false;
+	ETargetingStatus TargetingStatus = NotTargeting;
 	UPROPERTY(EditDefaultsOnly, Category="Aura|Input")
 	float AutoRunAcceptanceRadius = 50.f;
 
@@ -106,8 +115,12 @@ private:
 
 	void CursorHitOnTick();
 	void CursorTrace();
-	IEnemyInterface* LastActor;
-	IEnemyInterface* ThisActor;
+	TWeakObjectPtr<AActor> LastHighlightActor;
+	TWeakObjectPtr<AActor> CurrentHighlightActor;
+	IHighlightInterface* LastHighlight;
+	IHighlightInterface* CurrentHighlight;
+
+	void HighlightTargetActor(bool bHighlight, AActor* TargetActor);
 
 #pragma endregion
 

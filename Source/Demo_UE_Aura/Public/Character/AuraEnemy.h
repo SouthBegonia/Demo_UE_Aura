@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Character/AuraCharacterBase.h"
 #include "Interaction/EnemyInterface.h"
+#include "Interaction/HighlightInterface.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "AuraEnemy.generated.h"
 
@@ -15,13 +16,18 @@ class UWidgetComponent;
  * 
  */
 UCLASS()
-class DEMO_UE_AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface
+class DEMO_UE_AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface, public IHighlightInterface
 {
 	GENERATED_BODY()
 
 public:
 	AAuraEnemy();
 	virtual void PossessedBy(AController* NewController) override;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangeSignature OnHealthChanged;
+	UPROPERTY(BlueprintAssignable)
+	FOnAttributeChangeSignature OnMaxHealthChanged;
 
 protected:
 	virtual void BeginPlay() override;
@@ -31,12 +37,6 @@ protected:
 
 	virtual void SetIsBeingShocked_Implementation(bool bInShock) override;
 	void ShockLoopTagChanged(const bool bInShockLoop);
-
-
-	UPROPERTY(BlueprintAssignable)
-	FOnAttributeChangeSignature OnHealthChanged;
-	UPROPERTY(BlueprintAssignable)
-	FOnAttributeChangeSignature OnMaxHealthChanged;
 
 
 
@@ -69,8 +69,8 @@ public:
 #pragma region CursorHighlight
 
 public:
-	virtual void HighlightActor() override;
-	virtual void UnHighlightActor() override;
+	virtual void HighlightActor_Implementation() override;
+	virtual void UnHighlightActor_Implementation() override;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bHighlighted = false;

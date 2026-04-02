@@ -173,7 +173,7 @@ AActor* AAuraEnemy::GetCombatTarget_Implementation() const
 	return CombatTarget.IsValid() ? CombatTarget.Get() : nullptr;
 }
 
-void AAuraEnemy::HighlightActor()
+void AAuraEnemy::HighlightActor_Implementation()
 {
 	bHighlighted = true;
 
@@ -183,7 +183,7 @@ void AAuraEnemy::HighlightActor()
 	Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
 }
 
-void AAuraEnemy::UnHighlightActor()
+void AAuraEnemy::UnHighlightActor_Implementation()
 {
 	bHighlighted = false;
 
