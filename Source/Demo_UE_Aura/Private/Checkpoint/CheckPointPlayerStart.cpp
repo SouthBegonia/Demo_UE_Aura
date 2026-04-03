@@ -31,8 +31,6 @@ ACheckPointPlayerStart::ACheckPointPlayerStart(const FObjectInitializer& ObjectI
 
 void ACheckPointPlayerStart::OnActorLoaded_Implementation()
 {
-	UE_LOGFMT(LogTemp, Log, "[{FUNC}] : {Log}", __FUNCTION__,  TEXT("11111"));
-
 	// Do this in BeginPlay
 	if (bReached)
 	{

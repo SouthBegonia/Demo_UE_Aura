@@ -31,7 +31,12 @@ public:
 	TObjectPtr<UAbilityInfo> AbilityInfo;
 
 
-	void TravelToMap(const FString& MapName);
+	/**
+	 *
+	 * @param MapName The name of target map, not the asset name
+	 * @param PlayerStartTagInTargetMap The PlayerStartTag in target map. It will spawn player at the PlayerStart witch PlayerStartTag same with this
+	 */
+	void TravelToMap(const FString& MapName, FName PlayerStartTagInTargetMap = FName());
 
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
@@ -74,6 +79,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Aura|SaveGame")
 	FName DefaultPlayerStartTag;
 
+	/**
+	 * Key = MapName, Value = Map
+	 */
 	UPROPERTY(EditDefaultsOnly, Category="Aura|SaveGame")
 	TMap<FString, TSoftObjectPtr<UWorld>> AllMaps;
 
@@ -93,8 +101,11 @@ public:
 
 	bool LoadWorldStateWithSaveGame(UWorld* InWorld, ULoadScreenSaveGame* SaveData = nullptr);
 
+	FString GetMapNameFromMapAssetName(const FString& MapAssetName) const;
+	FString GetMapAssetNameFromMapName(const FString& MapName) const;
+
 private:
-	void ModifyInGameSaveData_WorldState(ULoadScreenSaveGame& SaveData, UWorld* InWorld);
+	void ModifyInGameSaveData_WorldState(ULoadScreenSaveGame& SaveData, UWorld* InWorld, const FString& InDestinationMapName = FString(""));
 
 #pragma endregion
 };

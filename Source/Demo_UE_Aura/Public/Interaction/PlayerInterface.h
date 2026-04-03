@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Game/LoadScreenSaveGame.h"
 #include "UObject/Interface.h"
 #include "PlayerInterface.generated.h"
 
@@ -63,4 +64,6 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	bool SaveProgress(const FName& CheckpointTag);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	bool SaveProgressWithParams(FSaveGameModifiableParams& ModifyParams);
 };

@@ -25,8 +25,18 @@ void AAuraGameModeBase::BeginPlay()
 	InitMapsInfo();
 }
 
-void AAuraGameModeBase::TravelToMap(const FString& MapName)
+void AAuraGameModeBase::TravelToMap(const FString& MapName, FName PlayerStartTagInTargetMap)
 {
+	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(GetGameInstance());
+	if (AuraGameInstance)
+	{
+		AuraGameInstance->CurrentMapName = MapName;
+
+		if (!PlayerStartTagInTargetMap.IsNone())
+			AuraGameInstance->PlayerStartTag = PlayerStartTagInTargetMap;
+	}
+
+	// Travel map
 	UGameplayStatics::OpenLevelBySoftObjectPtr(this, AllMaps.FindChecked(MapName));
 }
 
@@ -68,6 +78,8 @@ bool AAuraGameModeBase::FinalSaveGameToLocal(USaveGame* SaveGameObject, const FS
 		UE_LOGFMT(LogAura_SaveGame, Error, "[{FUNC}] : SaveGameToSlot failed: SlotName={SlotName}, SlotIndex={SlotIndex}", __FUNCTION__, SlotName, SlotIndex);
 	else
 		UE_LOGFMT(LogAura_SaveGame, Log, "[{FUNC}] : SaveGameToSlot successful: SlotName={SlotName}, SlotIndex={SlotIndex}", __FUNCTION__, SlotName, SlotIndex);
+
+	//Cast<ULoadScreenSaveGame>(SaveGameObject)->PrintDebugInfo();
 
 	return bSaveSuccess;
 }
@@ -246,7 +258,7 @@ bool AAuraGameModeBase::ModifyInGameSaveData(ULoadScreenSaveGame& SaveData, FSav
 		}
 
 		// World/Map
-		ModifyInGameSaveData_WorldState(SaveData, GetWorld());
+		ModifyInGameSaveData_WorldState(SaveData, GetWorld(), ModifyParams.MapName);
 
 		SaveData.bIsFirstTimeLoadIn = false;
 	}
@@ -269,7 +281,7 @@ bool AAuraGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame& SaveData, co
 	return FinalSaveGameToLocal(&SaveData, SlotName, SlotIndex);;
 }
 
-void AAuraGameModeBase::ModifyInGameSaveData_WorldState(ULoadScreenSaveGame& SaveData, UWorld* InWorld)
+void AAuraGameModeBase::ModifyInGameSaveData_WorldState(ULoadScreenSaveGame& SaveData, UWorld* InWorld, const FString& InDestinationMapName)
 {
 	FString WorldName = InWorld->GetMapName();
 	WorldName.RemoveFromStart(InWorld->StreamingLevelsPrefix);
@@ -316,6 +328,15 @@ void AAuraGameModeBase::ModifyInGameSaveData_WorldState(ULoadScreenSaveGame& Sav
 		if (MapToReplace.MapAssetName == WorldName)
 			MapToReplace = SavedMap;
 	}
+
+
+	// Map AssetName
+	if (InDestinationMapName != FString(""))
+	{
+		SaveData.MapAssetName = GetMapAssetNameFromMapName(InDestinationMapName);
+		SaveData.MapName = InDestinationMapName;
+	}
+
 	UE_LOGFMT(LogAura_SaveGame, Log, "[SaveGame]-[{FUNC}] : WorldState Done.", __FUNCTION__);
 }
 
@@ -359,6 +380,33 @@ bool AAuraGameModeBase::LoadWorldStateWithSaveGame(UWorld* InWorld, ULoadScreenS
 	}
 
 	return bLoadSuccessful;
+}
+
+FString AAuraGameModeBase::GetMapNameFromMapAssetName(const FString& MapAssetName) const
+{
+	for (const TPair<FString, TSoftObjectPtr<UWorld>>& Pair : AllMaps)
+	{
+		const FString& MapName = Pair.Key;
+		const TSoftObjectPtr<UWorld>& Map = Pair.Value;
+
+		if (Map.ToSoftObjectPath().GetAssetName() == MapAssetName)
+			return MapName;
+	}
+
+	UE_LOGFMT(LogAura_SaveGame, Error, "[{FUNC}] : not find MapName with MapAssetName = {Log}", __FUNCTION__, MapAssetName);
+	return FString("");
+}
+
+FString AAuraGameModeBase::GetMapAssetNameFromMapName(const FString& MapName) const
+{
+	for (const TPair<FString, TSoftObjectPtr<UWorld>>& Pair : AllMaps)
+	{
+		if (Pair.Key == MapName)
+			return Pair.Value.ToSoftObjectPath().GetAssetName();
+	}
+
+	UE_LOGFMT(LogAura_SaveGame, Error, "[{FUNC}] : not find MapAssetName with MapName = {Log}", __FUNCTION__, MapName);
+	return FString("");
 }
 
 

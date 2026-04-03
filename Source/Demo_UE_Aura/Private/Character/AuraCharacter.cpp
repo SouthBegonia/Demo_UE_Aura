@@ -286,6 +286,21 @@ void AAuraCharacter::HideMagicCircle_Implementation() const
 
 bool AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 {
+	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(GetGameInstance());
+
+	// Modify SaveData
+	FSaveGameModifiableParams ModifyParams;
+	ModifyParams.PlayerStartTag = CheckpointTag;
+
+
+	if (AuraGameInstance)
+		ModifyParams.MapName = AuraGameInstance->CurrentMapName;
+
+	return IPlayerInterface::Execute_SaveProgressWithParams(this, ModifyParams);
+}
+
+bool AAuraCharacter::SaveProgressWithParams_Implementation(FSaveGameModifiableParams& ModifyParams)
+{
 	bool SaveSuccessful = false;
 
 	if (AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
@@ -294,8 +309,6 @@ bool AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 		if (ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData())
 		{
 			// Modify SaveData
-			FSaveGameModifiableParams ModifyParams;
-			ModifyParams.PlayerStartTag = CheckpointTag;
 			AuraGameMode->ModifyInGameSaveData(*SaveData, ModifyParams, GetPlayerState());
 
 			// Save SaveData
@@ -306,7 +319,8 @@ bool AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 			// Update InGame Data
 			//	- Not necessary to set PlayerStartTag, because it will be set when next UMVVM_VM_LoadScreen::SlotButtonPressed_Play (data will be loaded from local).
 			//		anyway, just set it for other possible uses (ex: Recording last PlayerStartTag)
-			AuraGameInstance->PlayerStartTag = CheckpointTag;
+			AuraGameInstance->PlayerStartTag = ModifyParams.PlayerStartTag;
+			AuraGameInstance->CurrentMapName = ModifyParams.MapName;
 		}
 	}
 

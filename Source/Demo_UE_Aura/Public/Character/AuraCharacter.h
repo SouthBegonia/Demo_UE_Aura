@@ -58,6 +58,7 @@ protected:
 	virtual void HideMagicCircle_Implementation() const override;
 
 	virtual bool SaveProgress_Implementation(const FName& CheckpointTag) override;
+	virtual bool SaveProgressWithParams_Implementation(FSaveGameModifiableParams& ModifyParams) override;
 
 private:
 	UFUNCTION(NetMulticast, Reliable)

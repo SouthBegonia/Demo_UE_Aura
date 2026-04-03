@@ -31,8 +31,14 @@ public:
 	/* check is initialized necessary PlayerInfo */
 	bool IsInitializedPlayerInfoFromGameSave() const { return bInitializedPlayerInfoFromGameSave; }
 
+
+	/**
+	 * A PlayerStartTag, player will spawn on the target PlayerStartActor when enter a map
+	 */
 	UPROPERTY()
 	FName PlayerStartTag;
+
+	FString CurrentMapName;
 
 	UPROPERTY()
 	FString LoadSlotName = FString();

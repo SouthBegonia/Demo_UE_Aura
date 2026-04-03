@@ -85,7 +85,7 @@ struct FSavedMap
  * FSaveGameModifiableParams
  * - using for InGame, not LoadMenu
  */
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FSaveGameModifiableParams
 {
 	GENERATED_BODY()
@@ -93,6 +93,9 @@ struct FSaveGameModifiableParams
 public:
 	UPROPERTY()
 	FName PlayerStartTag;
+
+	UPROPERTY()
+	FString MapName = FString();
 };
 
 /**
@@ -112,6 +115,9 @@ public:
 
 	UPROPERTY()
 	FString MapName = FString("Default Map Name");
+
+	UPROPERTY()
+	FString MapAssetName = FString("Default Map Asset Name");
 
 	UPROPERTY()
 	FName PlayerStartTag;
@@ -167,6 +173,13 @@ public:
 public:
 	FSavedMap GetSavedMapWithMapName(const FString& InMapName);
 	bool HasMap(const FString& InMapName) const;
+
+#pragma endregion
+
+#pragma region DEBUG
+
+public:
+	void PrintDebugInfo() const;
 
 #pragma endregion
 };
