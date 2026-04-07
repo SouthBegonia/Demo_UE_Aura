@@ -7,7 +7,7 @@
 #include "MapEntrance.generated.h"
 
 UCLASS()
-class DEMO_UE_AURA_API AMapEntrance : public APlayerStart, public ISaveInterface
+class DEMO_UE_AURA_API AMapEntrance : public APlayerStart, public ISaveInterface, public IHighlightInterface
 {
 	GENERATED_BODY()
 
@@ -16,6 +16,10 @@ public:
 	AMapEntrance(const FObjectInitializer& ObjectInitializer);
 
 	virtual void PostInitializeComponents() override;
+
+	UPROPERTY(EditDefaultsOnly, Category="Aura", meta=(ToolTip="Highlight CheckpointMesh if enabled"))
+	bool bEnableHighlighting = true;
+
 
 	UPROPERTY(BlueprintReadOnly, SaveGame)
 	bool bReached = false;
@@ -33,6 +37,10 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual void HighlightActor_Implementation() override;
+	virtual void UnHighlightActor_Implementation() override;
+	virtual void SetMoveToLocation_Implementation(FVector& OutDestination) override;
 
 protected:
 	UPROPERTY(EditAnywhere)

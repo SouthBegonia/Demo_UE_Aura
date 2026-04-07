@@ -32,6 +32,9 @@ AMapEntrance::AMapEntrance(const FObjectInitializer& ObjectInitializer) : Super(
 	SphereComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	SphereComp->SetCollisionResponseToAllChannels(ECR_Ignore);
 	SphereComp->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+
+	if (bEnableHighlighting)
+		CheckpointMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_TAN);
 }
 
 void AMapEntrance::PostInitializeComponents()
@@ -49,6 +52,23 @@ void AMapEntrance::BeginPlay()
 	Super::BeginPlay();
 
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &AMapEntrance::OnSphereOverlap);
+}
+
+void AMapEntrance::HighlightActor_Implementation()
+{
+	if (!bEnableHighlighting) return;
+	CheckpointMesh->SetRenderCustomDepth(true);
+}
+
+void AMapEntrance::UnHighlightActor_Implementation()
+{
+	if (!bEnableHighlighting) return;
+	CheckpointMesh->SetRenderCustomDepth(false);
+}
+
+void AMapEntrance::SetMoveToLocation_Implementation(FVector& OutDestination)
+{
+	OutDestination = MoveToSign->GetComponentLocation();
 }
 
 void AMapEntrance::OnActorLoaded_Implementation()
