@@ -93,14 +93,13 @@ void AMapEntrance::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 				ModifyParams.PlayerStartTag = DestinationPlayerStartTag;
 				ModifyParams.MapName = MapName;
 
-				// Plan_A : SaveGame (will setting PlayerStartTag internally
-				//bool bSavedSuccessful = true;
-				//bSavedSuccessful = IPlayerInterface::Execute_SaveProgressWithParams(OtherActor, ModifyParams); // TODO : maybe SaveGame after travel map is safer?
-				//if (bSavedSuccessful)
-				//	AuraGameMode->TravelToMap(DestinationMap.GetAssetName(), DestinationPlayerStartTag);
+				// SaveGame (there will set PlayerStartTag internally
+				//		when open level, PlayerInfo/Attributes... will reinitialize with SaveGameData, so we have to save game in there
+				bool bSavedSuccessful = true;
+				bSavedSuccessful = IPlayerInterface::Execute_SaveProgressWithParams(OtherActor, ModifyParams);
+				if (bSavedSuccessful)
+					AuraGameMode->TravelToMap(MapName, DestinationPlayerStartTag);
 
-				// Plan_B : Just setting PlayerStartTag
-				AuraGameMode->TravelToMap(MapName, DestinationPlayerStartTag);
 			}
 		}
 	}

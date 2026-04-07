@@ -34,6 +34,9 @@ void AAuraGameModeBase::TravelToMap(const FString& MapName, FName PlayerStartTag
 
 		if (!PlayerStartTagInTargetMap.IsNone())
 			AuraGameInstance->PlayerStartTag = PlayerStartTagInTargetMap;
+
+		// PlayerInfo(Ability, Attribute...) have to initialize like beginning after open level (all actors will be destroy)
+		AuraGameInstance->ClearInitializedPlayerInfoFromGameSaveDoneMark();
 	}
 
 	// Travel map
