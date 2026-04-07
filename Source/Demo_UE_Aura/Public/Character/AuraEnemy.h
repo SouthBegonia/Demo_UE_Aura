@@ -38,6 +38,8 @@ protected:
 	virtual void SetIsBeingShocked_Implementation(bool bInShock) override;
 	void ShockLoopTagChanged(const bool bInShockLoop);
 
+	/* a code to uniquely identify this item */
+	int32 EnemyCode = -1;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Character Class Defaults")
@@ -47,6 +49,8 @@ protected:
 #pragma region Combat
 
 public:
+	FORCEINLINE void SetEnemyCode(const int32 InCode) { check(EnemyCode == -1); EnemyCode = InCode; }
+	FORCEINLINE void SetEnemyLevel(const int32 InLevel) { Level = InLevel; }
 	virtual int32 GetPlayerLevel_Implementation() override;
 	virtual void Die(const FVector& DeathImpulse = FVector::ZeroVector) override;
 	virtual void SetCombatTarget_Implementation(AActor* InCombatTarget) override;

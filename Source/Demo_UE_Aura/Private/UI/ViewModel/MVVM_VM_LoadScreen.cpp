@@ -36,6 +36,9 @@ void UMVVM_VM_LoadScreen::InitializeLoadSlots()
 
 void UMVVM_VM_LoadScreen::LoadAllSlotData()
 {
+	if (UGameplayStatics::GetGameInstance(this) == nullptr)
+		return;
+
 	// Load ULoadScreenSaveGame to initialize all LoadSlotVM
 	for (const TPair<int32, UMVVM_VM_LoadSlot*>& Pair : LoadSlotsMap)
 	{
@@ -63,6 +66,12 @@ UMVVM_VM_LoadSlot* UMVVM_VM_LoadScreen::GetLoadSlotViewModel(int32 Index) const
 
 void UMVVM_VM_LoadScreen::SlotButtonPressed_NewSlot(int32 SlotIndex, const FString& EnterName)
 {
+	if (UGameplayStatics::GetGameInstance(this) == nullptr)
+	{
+		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Please switch to SinglePlayer")));
+		return;
+	}
+
 	// TODO : check EnterName is valid.
 	if (EnterName.IsEmpty())
 		return;

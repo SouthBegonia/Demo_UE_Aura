@@ -13,6 +13,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Demo_UE_Aura/Demo_UE_Aura.h"
+#include "Game/AuraEnemyManagerSubsystem.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UI/Widget/AuraUserWidget.h"
 
@@ -165,6 +166,10 @@ void AAuraEnemy::Die(const FVector& DeathImpulse)
 
 	if (AuraAIController && AuraAIController->GetBlackboardComponent())
 		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("Dead"), true);
+
+	// Notify EnemyManager
+	if (UAuraEnemyManagerSubsystem* EnemyManagerSubsystem = GetWorld()->GetSubsystem<UAuraEnemyManagerSubsystem>())
+		EnemyManagerSubsystem->HandleAuraEnemyDied(EnemyCode);
 
 	Super::Die(DeathImpulse);
 }

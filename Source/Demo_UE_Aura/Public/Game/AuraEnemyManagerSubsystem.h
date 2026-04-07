@@ -1,0 +1,69 @@
+
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
+#include "Subsystems/WorldSubsystem.h"
+#include "AuraEnemyManagerSubsystem.generated.h"
+
+#define SpawnedEnemyCodeStartIndex 100
+
+class AAuraEnemy;
+
+USTRUCT(BlueprintType)
+struct FAuraSpawnEnemyParameters
+{
+	GENERATED_BODY()
+
+
+	FAuraSpawnEnemyParameters() {};
+	FAuraSpawnEnemyParameters(const TSubclassOf<AAuraEnemy>& InEnemyClass, const int32 InEnemyLevel, const ECharacterClass& InEnemyCharacterClass) :
+		EnemyClass(InEnemyClass),
+		EnemyLevel(InEnemyLevel),
+		EnemyCharacterClass(InEnemyCharacterClass)
+	{
+
+	}
+
+public:
+	UPROPERTY()
+	TSubclassOf<AAuraEnemy> EnemyClass;
+
+	UPROPERTY()
+	int32 EnemyLevel = 1;
+
+	UPROPERTY()
+	ECharacterClass EnemyCharacterClass = ECharacterClass::Warrior;
+
+
+	UPROPERTY()
+	FTransform SpawnTransform = FTransform();
+};
+
+
+UCLASS(Blueprintable)
+class DEMO_UE_AURA_API UAuraEnemyManagerSubsystem : public UWorldSubsystem
+{
+	GENERATED_BODY()
+
+public:
+	UFUNCTION(BlueprintCallable, meta=(DefaultToSelf = "WorldContextObject"))
+	AAuraEnemy* TrySpawnAuraEnemy(const UObject* WorldContextObject, const FAuraSpawnEnemyParameters& SpawnParams);
+
+	UFUNCTION()
+	void HandleAuraEnemyDied(int32 EnemyCode);
+
+protected:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	virtual void Deinitialize() override;
+
+	virtual void OnWorldBeginPlay(UWorld& InWorld) override;
+
+private:
+	bool bSystemEnabled = false;
+
+
+	int32 SpawnedEnemyCodeIndex = SpawnedEnemyCodeStartIndex;
+	TSet<int32> SpawnedEnemyCodeSet;
+};

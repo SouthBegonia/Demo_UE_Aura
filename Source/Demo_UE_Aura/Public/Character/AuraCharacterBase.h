@@ -61,6 +61,8 @@ public:
 
 	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
+	FORCEINLINE void SetCharacterClass(const ECharacterClass InCharacterClass) { CharacterClass = InCharacterClass; }
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Character Class Defaults")
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;
