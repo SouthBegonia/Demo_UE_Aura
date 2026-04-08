@@ -91,3 +91,18 @@ void UAuraEnemyManagerSubsystem::HandleAuraEnemyDied(int32 EnemyCode)
 	else
 		UE_LOGFMT(LogAura_Enemy, Error, "[{FUNC}] : SpawnedEnemyCodeSet not contains EnemyCode = {code}", __FUNCTION__, EnemyCode);
 }
+
+void UAuraEnemyManagerSubsystem::ForEachAuraEnemyInWorld(const FForEachAuraEnemy& Delegate) const
+{
+	TArray<AActor*> AllActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AAuraEnemy::StaticClass(), AllActors);
+	for (AActor* const& EnemyActor : AllActors)
+	{
+		AAuraEnemy* Enemy = Cast<AAuraEnemy>(EnemyActor);
+		if (IsValid(Enemy))
+		{
+			if (!Delegate.ExecuteIfBound(Enemy))
+				UE_LOG(LogAura_Enemy, Log, TEXT("Failed to execute delegate in %hs"), __FUNCTION__);
+		}
+	}
+}

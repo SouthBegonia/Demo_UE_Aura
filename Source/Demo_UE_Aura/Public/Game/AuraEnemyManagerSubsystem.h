@@ -7,9 +7,11 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "AuraEnemyManagerSubsystem.generated.h"
 
+class AAuraEnemy;
+
 #define SpawnedEnemyCodeStartIndex 100
 
-class AAuraEnemy;
+DECLARE_DELEGATE_OneParam(FForEachAuraEnemy, AAuraEnemy*);
 
 USTRUCT(BlueprintType)
 struct FAuraSpawnEnemyParameters
@@ -53,6 +55,9 @@ public:
 
 	UFUNCTION()
 	void HandleAuraEnemyDied(int32 EnemyCode);
+
+public:
+	void ForEachAuraEnemyInWorld(const FForEachAuraEnemy& Delegate) const;
 
 protected:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;

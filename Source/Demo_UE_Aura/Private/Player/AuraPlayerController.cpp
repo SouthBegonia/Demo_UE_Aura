@@ -15,6 +15,7 @@
 #include "Components/DecalComponent.h"
 #include "Components/SplineComponent.h"
 #include "Demo_UE_Aura/Demo_UE_Aura.h"
+#include "Game/AuraCheatManager.h"
 #include "GameFramework/Character.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
@@ -25,6 +26,7 @@ AAuraPlayerController::AAuraPlayerController()
 	bReplicates = true;
 
 	Spline = CreateDefaultSubobject<USplineComponent>("Spline");
+	CheatClass = UAuraCheatManager::StaticClass();
 }
 
 void AAuraPlayerController::BeginPlay()
