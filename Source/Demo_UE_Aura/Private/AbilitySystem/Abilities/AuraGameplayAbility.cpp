@@ -3,10 +3,19 @@
 
 #include "AbilitySystem/Abilities/AuraGameplayAbility.h"
 
+#include "AuraGameplayTags.h"
 #include "AuraLogChannels.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 
 #pragma region Ability Description
+
+UAuraGameplayAbility::UAuraGameplayAbility()
+{
+	if (!ActivationBlockedTags.HasTagExact(FAuraGameplayTags::Get().Effects_Dead))
+	{
+		ActivationBlockedTags.AddTag(FAuraGameplayTags::Get().Effects_Dead);
+	}
+}
 
 FString UAuraGameplayAbility::GetAbilityDescription(const int32 AbilityLevel)
 {

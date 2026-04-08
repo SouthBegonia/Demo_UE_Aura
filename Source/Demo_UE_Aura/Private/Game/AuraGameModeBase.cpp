@@ -73,6 +73,17 @@ AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 	return nullptr;
 }
 
+void AAuraGameModeBase::PlayerDied(ACharacter* DeadCharacter)
+{
+	ULoadScreenSaveGame* SaveGame = RetrieveInGameSaveData();
+	if (SaveGame == nullptr)
+		return;
+
+	// Travel Map
+	// Then will load lastest SaveGameData to initialize all. This means you will lose all the exp/Item you got since last SaveGame
+	TravelToMap(SaveGame->MapName, SaveGame->PlayerStartTag);
+}
+
 bool AAuraGameModeBase::FinalSaveGameToLocal(USaveGame* SaveGameObject, const FString& SlotName, const int32 SlotIndex) const
 {
 	// Save data to local

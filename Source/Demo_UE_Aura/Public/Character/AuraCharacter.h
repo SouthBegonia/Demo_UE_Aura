@@ -38,6 +38,8 @@ protected:
 	void LoadProgress();
 
 #pragma region PlayerInterface
+	virtual void Die(const FVector& DeathImpulse = FVector::ZeroVector) override;
+
 	virtual int32 GetEXP_Implementation() override;
 
 	virtual void AddToEXP_Implementation(int32 InEXP) override;

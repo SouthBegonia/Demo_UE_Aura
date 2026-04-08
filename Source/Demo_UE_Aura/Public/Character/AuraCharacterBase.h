@@ -90,6 +90,7 @@ protected:
 	virtual bool IsBeingShocked_Implementation() const override;
 	virtual void SetIsBeingShocked_Implementation(bool bInShock) override;
 
+	UPROPERTY(BlueprintReadOnly, Category="Aura|Combat")
 	bool bDead = false;
 
 

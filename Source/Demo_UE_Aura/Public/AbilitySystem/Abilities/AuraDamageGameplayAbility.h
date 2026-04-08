@@ -15,6 +15,8 @@ UCLASS()
 class DEMO_UE_AURA_API UAuraDamageGameplayAbility : public UAuraGameplayAbility
 {
 	GENERATED_BODY()
+public:
+	UAuraDamageGameplayAbility(){}
 
 public:
 	/*

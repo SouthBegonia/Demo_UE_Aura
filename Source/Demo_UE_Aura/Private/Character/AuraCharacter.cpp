@@ -150,6 +150,23 @@ void AAuraCharacter::LoadProgress()
 		UE_LOGFMT(LogAura_SaveGame, Log, "[{FUNC}] : Load progress failed.", __FUNCTION__);
 }
 
+void AAuraCharacter::Die(const FVector& DeathImpulse)
+{
+	Super::Die(DeathImpulse);
+
+	FTimerDelegate DeathTimerDelegate;
+	DeathTimerDelegate.BindLambda([this]
+	{
+		if (AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
+		{
+			AuraGameMode->PlayerDied(this);
+		}
+	});
+	FTimerHandle DeathTimerHandle;
+	GetWorldTimerManager().SetTimer(DeathTimerHandle, DeathTimerDelegate, 5.f, false);
+	CameraComp->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+}
+
 int32 AAuraCharacter::GetPlayerLevel_Implementation()
 {
 	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();

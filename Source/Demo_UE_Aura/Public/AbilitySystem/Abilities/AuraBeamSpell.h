@@ -15,6 +15,9 @@ class DEMO_UE_AURA_API UAuraBeamSpell : public UAuraDamageGameplayAbility
 	GENERATED_BODY()
 
 public:
+	UAuraBeamSpell(){}
+
+public:
 	UFUNCTION(BlueprintCallable)
 	void StoreMouseDataInfo(const FHitResult& HitResult);
 

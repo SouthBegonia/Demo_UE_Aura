@@ -200,6 +200,7 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 			{
 				const FVector& DeathImpulse = UAuraAbilitySystemLibrary::GetDeathImpulse(Props.EffectContextHandle);
 				CombatInterface->Die(DeathImpulse);
+				HandleDie(Props);
 			}
 
 			SendEXPEvent(Props);
@@ -320,6 +321,36 @@ void UAuraAttributeSet::HandleDebuff(const FEffectProperties& Props)
 		TSharedPtr<FGameplayTag> DebuffDamageType = MakeShareable(new FGameplayTag(DamageType));
 		AuraContext->SetDamageType(DebuffDamageType);
 
+		Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
+	}
+}
+
+void UAuraAttributeSet::HandleDie(const FEffectProperties& Props)
+{
+	const FAuraGameplayTags& Tags = FAuraGameplayTags::Get();
+
+	// ===== Cancel activating Ability =====
+	FGameplayTagContainer WithTags;
+	WithTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Abilities")));
+	Props.TargetASC->CancelAbilities(&WithTags);
+
+	// ===== Create GE =====
+	FGameplayEffectContextHandle EffectContext = Props.SourceASC->MakeEffectContext();
+	EffectContext.AddSourceObject(Props.SourceAvatarActor);
+
+	FString DebuffName = TEXT("Dead");
+	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(DebuffName));
+	Effect->DurationPolicy = EGameplayEffectDurationType::Infinite;
+
+	Effect->CachedGrantedTags.AddTag(Tags.Effects_Dead);
+	Effect->CachedGrantedTags.AddTag(Tags.Player_Block_CursorTrace);
+	Effect->CachedGrantedTags.AddTag(Tags.Player_Block_InputPressed);
+	Effect->CachedGrantedTags.AddTag(Tags.Player_Block_InputHeld);
+	Effect->CachedGrantedTags.AddTag(Tags.Player_Block_InputReleased);
+
+	// ===== Apply Debuff GE =====
+	if (FGameplayEffectSpec* MutableSpec = new FGameplayEffectSpec(Effect, EffectContext, 1.f))
+	{
 		Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
 	}
 }

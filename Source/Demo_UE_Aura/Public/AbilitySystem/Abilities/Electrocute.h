@@ -13,6 +13,8 @@ UCLASS()
 class DEMO_UE_AURA_API UElectrocute : public UAuraBeamSpell
 {
 	GENERATED_BODY()
+public:
+	UElectrocute(){}
 
 
 #pragma region Ability Description

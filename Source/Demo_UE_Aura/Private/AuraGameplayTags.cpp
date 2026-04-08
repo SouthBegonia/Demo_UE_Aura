@@ -170,4 +170,5 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 
 
 	GameplayTags.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effects.HitReact"), FString("HitReact"));
+	GameplayTags.Effects_Dead = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effects.Dead"), FString("Effects_Dead"));
 }

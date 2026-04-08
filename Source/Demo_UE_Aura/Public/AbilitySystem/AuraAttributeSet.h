@@ -277,6 +277,7 @@ private:
 	void HandleIncomingDamage(const FEffectProperties& Props);
 	void HandleIncomingEXP(const FEffectProperties& Props);
 	void HandleDebuff(const FEffectProperties& Props);
+	void HandleDie(const FEffectProperties& Props);
 
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 
