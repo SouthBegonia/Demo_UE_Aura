@@ -69,6 +69,13 @@ public:
 
 #pragma endregion
 
+#pragma region LootItem
+
+protected:
+	UFUNCTION(BlueprintImplementableEvent, Category="Aura|LootItem")
+	void SpawnLoot();
+
+#pragma endregion
 
 #pragma region CursorHighlight
 

@@ -169,6 +169,8 @@ void AAuraEnemy::Die(const FVector& DeathImpulse)
 	if (AuraAIController && AuraAIController->GetBlackboardComponent())
 		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("Dead"), true);
 
+	SpawnLoot();
+
 	// Notify EnemyManager
 	if (UAuraEnemyManagerSubsystem* EnemyManagerSubsystem = GetWorld()->GetSubsystem<UAuraEnemyManagerSubsystem>())
 		EnemyManagerSubsystem->HandleAuraEnemyDied(EnemyCode);

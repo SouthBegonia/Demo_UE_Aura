@@ -41,6 +41,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GamePlayEffectClass);
 
+	UFUNCTION(BlueprintCallable)
+	void SetActorLevel(const float InActorLevel) { ActorLevel = InActorLevel; };
+
 	/*
 	 * Decide should this Actor be destroyed after Applied GE
 	 */

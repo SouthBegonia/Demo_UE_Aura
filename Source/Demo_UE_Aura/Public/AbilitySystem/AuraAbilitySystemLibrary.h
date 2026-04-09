@@ -10,6 +10,7 @@
 #include "AuraAbilitySystemLibrary.generated.h"
 
 
+class ULootTiers;
 class AAuraHUD;
 class USpellMenuWidgetController;
 class UAbilitySystemComponent;
@@ -59,6 +60,13 @@ public:
 
 #pragma endregion
 
+#pragma region LootTiers
+
+public:
+	UFUNCTION(BlueprintCallable, Category="Aura|Loot Tiers", meta=(WorldContext="WorldContextObject"))
+	static ULootTiers* GetLootTiers(const UObject* WorldContextObject);
+
+#pragma endregion
 
 #pragma region Effect Context Getter/Setter
 
