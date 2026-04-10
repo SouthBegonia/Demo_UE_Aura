@@ -72,6 +72,13 @@ protected:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
 	TObjectPtr<UWidgetSwitcher> BtnBoxSwitcher;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetOneBtnLText(const FString& InText);
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetTwoBtnLText(const FString& InText);
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetTwoBtnRText(const FString& InText);
+
 private:
 	FAreYouSureWidgetParam ShowParam;
 

@@ -26,6 +26,12 @@ void UAreYouSureWidget::RefreshShow(const FAreYouSureWidgetParam& Param)
 		Text_Title->SetText(FText::FromString(Param.TitleText));
 	if (!Param.ContentText.IsEmpty())
 		Text_Content->SetText(FText::FromString(Param.ContentText));
+	if (!Param.BtnOneText.IsEmpty())
+		SetOneBtnLText(Param.BtnOneText);
+	if (!Param.BtnTwoLText.IsEmpty())
+		SetTwoBtnLText(Param.BtnTwoLText);
+	if (!Param.BtnTwoRText.IsEmpty())
+		SetTwoBtnRText(Param.BtnTwoRText);
 }
 
 UAreYouSureWidget* UAreYouSureWidget::CreateAndShowAreYouSureWidget(const UObject* WorldContextObject, const TSubclassOf<UAreYouSureWidget> WidgetClass, const FAreYouSureWidgetParam& Param)
