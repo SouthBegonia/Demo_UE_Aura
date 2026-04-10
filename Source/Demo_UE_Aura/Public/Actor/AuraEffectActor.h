@@ -35,6 +35,8 @@ class DEMO_UE_AURA_API AAuraEffectActor : public AActor
 public:
 	AAuraEffectActor();
 
+	virtual void Tick(float DeltaSeconds) override;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -90,4 +92,43 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Applied Effects")
 	float ActorLevel = 1.f;
+
+#pragma region Pickup Effect
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void StartRotation();
+
+	UFUNCTION(BlueprintCallable)
+	void StartSinusoidalMovement();
+
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Aura|Pickup Movement")
+	bool bRotates = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Aura|Pickup Movement", meta=(EditCondition="bRotates"))
+	float RotationRate = 45.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Aura|Pickup Movement")
+	bool bSinusoidalMovement = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Aura|Pickup Movement", meta=(EditCondition="bSinusoidalMovement"))
+	float SineAmplitude = 1.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Aura|Pickup Movement", meta=(EditCondition="bSinusoidalMovement"))
+	float SinePeriodConstant = 1.f;
+
+
+	UPROPERTY(BlueprintReadWrite, Category="Aura|Pickup Movement")
+	FVector CalculatedLocation;
+	UPROPERTY(BlueprintReadWrite, Category="Aura|Pickup Movement")
+	FRotator CalculatedRotation;
+
+	UPROPERTY(BlueprintReadOnly, Category="Aura|Pickup Movement")
+	FVector InitialLocation;
+
+private:
+	float RunningTime = 0.f;
+
+	void ItemMovement(float DeltaTime);
+
+#pragma endregion
 };
