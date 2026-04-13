@@ -32,8 +32,12 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	}
 
 	FAuraSpawnProjectileParams SpawnParams;
-	SpawnParams.SpawnLocation = ProjectileTargetLocation;
+	SpawnParams.SpawnLocation = SocketLocation;
 	SpawnParams.SpawnRotation = Rotation;
+	SpawnParams.HomingTargetActor = nullptr;
+	SpawnParams.HomingTargetLocation = ProjectileTargetLocation;
+	SpawnParams.HomingAcceleration = 6500.f;
+
 	GenerateAndSpawnProjectile(SpawnParams);
 
 	if (bDrawDebugLine)
