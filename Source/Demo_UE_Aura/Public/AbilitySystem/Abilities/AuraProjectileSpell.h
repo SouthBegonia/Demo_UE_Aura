@@ -43,6 +43,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Aura|Projectile")
 	TSubclassOf<AAuraProjectile> ProjectileClass;
 
+	UFUNCTION(BlueprintNativeEvent)
+	bool CanProjectileHomingTarget();
+
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
@@ -50,5 +53,5 @@ protected:
 	UFUNCTION(BlueprintCallable, Category="Aura|Projectile")
 	void SpawnProjectile(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch = false, float PitchOverride = 0.f);
 
-	void GenerateAndSpawnProjectile(const FAuraSpawnProjectileParams& SpawnParams) const;
+	void GenerateAndSpawnProjectile(const FAuraSpawnProjectileParams& SpawnParams);
 };

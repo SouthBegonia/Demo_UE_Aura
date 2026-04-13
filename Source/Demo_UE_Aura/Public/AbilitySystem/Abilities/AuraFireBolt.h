@@ -26,6 +26,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Aura|FireBolt")
 	float HomingAccelerationMax = 3200.f;
 
+	virtual bool CanProjectileHomingTarget_Implementation() override { return true; };
+
 private:
 	/* Only for Debug, get truly NumProjectiles by GetNumProjectiles()  */
 	UPROPERTY(EditDefaultsOnly, Category="Aura|FireBolt")

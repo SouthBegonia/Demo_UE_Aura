@@ -11,6 +11,11 @@
 #include "Interaction/CombatInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+bool UAuraProjectileSpell::CanProjectileHomingTarget_Implementation()
+{
+	return  false;
+}
+
 void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                            const FGameplayEventData* TriggerEventData)
 {
@@ -47,7 +52,7 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 	}
 }
 
-void UAuraProjectileSpell::GenerateAndSpawnProjectile(const FAuraSpawnProjectileParams& SpawnParams) const
+void UAuraProjectileSpell::GenerateAndSpawnProjectile(const FAuraSpawnProjectileParams& SpawnParams)
 {
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(SpawnParams.SpawnLocation);
@@ -63,7 +68,7 @@ void UAuraProjectileSpell::GenerateAndSpawnProjectile(const FAuraSpawnProjectile
 
 	const AActor* LocalHomingActor = SpawnParams.HomingTargetActor.IsValid() && SpawnParams.HomingTargetActor.Get()->Implements<UCombatInterface>() ? SpawnParams.HomingTargetActor.Get() : nullptr;
 	const FVector LocalHomingLocation = SpawnParams.HomingTargetLocation;
-	const bool bHoming = IsValid(LocalHomingActor) || !LocalHomingLocation.IsZero();
+	const bool bHoming = CanProjectileHomingTarget() && (IsValid(LocalHomingActor) || !LocalHomingLocation.IsZero());
 	if (bHoming)
 	{
 		Projectile->ProjectileMovement->HomingAccelerationMagnitude = SpawnParams.HomingAcceleration;
