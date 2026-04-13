@@ -29,17 +29,17 @@ struct FAuraSpawnEnemyParameters
 	}
 
 public:
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	TSubclassOf<AAuraEnemy> EnemyClass;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	int32 EnemyLevel = 1;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	ECharacterClass EnemyCharacterClass = ECharacterClass::Warrior;
 
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite)
 	FTransform SpawnTransform = FTransform();
 };
 
